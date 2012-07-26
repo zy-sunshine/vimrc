@@ -292,7 +292,7 @@ function! s:ShowFuncFolds()
 endfunction
 
 " Set FoldText to filename and tag count.
-function! ShowFuncFoldText()
+function! s:ShowFuncFoldText()
   let l:line = ""
   let l:textwidth = &textwidth - 20
   let l:line = getline(v:foldstart)
