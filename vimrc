@@ -211,3 +211,9 @@ endfunction
 "if has("autocmd")
 "    autocmd bufwritepost .vimrc source $MYVIMRC
 "endif
+
+autocmd BufReadPost *
+            \ if line("'\"")>0&&line("'\"")<=line("$") |
+            \    exe "normal g'\"" |
+            \ endif
+
