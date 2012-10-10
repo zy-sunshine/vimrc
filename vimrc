@@ -4,7 +4,7 @@ call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
 "*** indentation ***"
-set smartindent  
+set smartindent
 set shiftwidth=4
 set shiftround
 " 显示标题 与 laststatus 相似
@@ -14,7 +14,7 @@ set smarttab
 set tabstop=4
 set softtabstop=4
 set hidden
-set expandtab  
+set expandtab
 set textwidth=79
 
 " terminal and gui settings
@@ -39,8 +39,8 @@ set confirm
 "w!! writes the file using sudo
 cmap w!! w !sudo tee % >/dev/null
 
-" 使用鼠标 
-set mouse=a 
+" 使用鼠标
+set mouse=a
 " 显示命令 at bottom
 set showcmd
 
@@ -55,6 +55,9 @@ set ignorecase
 " 一行字过长不折行
 set nowrap
 set wrapscan
+" 一行很长移动不跳
+map <Up> gk
+map <Down> gj
 
 
 " Jump 5 lines when running out of the screen
