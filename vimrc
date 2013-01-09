@@ -220,3 +220,5 @@ autocmd BufReadPost *
             \    exe "normal g'\"" |
             \ endif
 
+let mapleader=","
+
