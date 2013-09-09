@@ -226,11 +226,11 @@ if has("cscope")
     "set csprg=/usr/bin/cscope             "指定用来执行 cscope的命令,这里不一定是/usr/bin/cscope,你自己得找到这个位置
     set csto=1                            "先搜索tags标签文件，再搜索cscope数据库
     set cst                               "使用|:cstag|(:cs findg)，而不是缺省的:tag
-    set nocsverb                          "不显示添加数据库是否成功
+    "set nocsverb                          "不显示添加数据库是否成功
     " add any database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out
-    endif
+    "if filereadable("cscope.out")
+    "    cs add cscope.out
+    "endif
     set csverb                            "显示添加成功与否
 endif
 if filereadable("vimrc")
