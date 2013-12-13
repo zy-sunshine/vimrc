@@ -173,7 +173,7 @@ map <C-c> "+y
 
 function! s:_replace_blank(text)
     let text = a:text
-    let text_new = substitute(text, "[ ]*$", "", "")
+    let text_new = substitute(text, "[ \t]*$", "", "")
     return text_new
 endfunction
 noremap - :call ReplaceBlank1()<CR>
@@ -250,4 +250,7 @@ let g:vimrc_email='zy.netsec@gmail.com'
 let g:vimrc_homepage='http://www.hackos.org'
 
 nmap <F2> :AuthorInfoDetect<cr>
-set fileformat=unix
+" To check the unix CR/LF file format
+"set fileformat=unix
+"e ++ff=unix
+
