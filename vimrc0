@@ -165,6 +165,7 @@ function AddHTML()
 endf
 
 au BufReadCmd   *.epub      call zip#Browse(expand("<amatch>"))
+au BufReadCmd   *.apk      call zip#Browse(expand("<amatch>"))
 
 map <C-c> "+y
 "map <C-v> "+p
