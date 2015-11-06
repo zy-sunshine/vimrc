@@ -257,3 +257,7 @@ nmap <F2> :AuthorInfoDetect<cr>
 "set fileformat=unix
 "e ++ff=unix
 
+nmap ,f :FufFileWithCurrentBufferDir<CR>
+nmap ,b :FufBuffer<CR>
+nmap ,t :FufTaggedFile<CR>
+
