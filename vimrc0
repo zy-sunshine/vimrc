@@ -262,3 +262,5 @@ nmap ,f :FufFile<CR>
 nmap ,b :FufBuffer<CR>
 nmap ,t :FufTaggedFile<CR>
 
+set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+
