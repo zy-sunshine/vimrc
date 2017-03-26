@@ -252,7 +252,8 @@ let g:vimrc_author='Zhang Yang'
 let g:vimrc_email='zy.netsec@gmail.com'
 let g:vimrc_homepage='http://www.hackos.org'
 
-nmap <F2> :AuthorInfoDetect<cr>
+nmap <F10> :AuthorInfoDetect<cr>
+nmap <F2>  :cd %:p:h <Bar> new<Space>
 " To check the unix CR/LF file format
 "set fileformat=unix
 "e ++ff=unix
