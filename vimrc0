@@ -2,7 +2,7 @@ scriptencoding utf-8
 set encoding=utf-8
 " vimrc
 call pathogen#infect()
-call pathogen#runtime_append_all_bundles()
+"call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
 
 "*** indentation ***"
@@ -102,6 +102,13 @@ set updatetime=100
 " 突出显示 tab 和尾部空格
 set listchars=tab:»·,trail:·
 set list
+
+" To check the unix CR/LF file format
+set fileformat=unix
+set ffs=unix
+set encoding=utf-8
+set fileencoding=utf-8
+"e ++ff=unix
 
 " Omnicompletion for Python
 autocmd FileType python set omnifunc=pythoncomplete#Complete
@@ -254,9 +261,6 @@ let g:vimrc_homepage='http://www.hackos.org'
 
 nmap <F10> :AuthorInfoDetect<cr>
 nmap <F2>  :cd %:p:h <Bar> new<Space>
-" To check the unix CR/LF file format
-"set fileformat=unix
-"e ++ff=unix
 
 nmap ,c :FufFileWithCurrentBufferDir<CR>
 nmap ,f :FufFile<CR>
@@ -265,3 +269,21 @@ nmap ,t :FufTaggedFile<CR>
 
 set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
 
+" syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_python_pylint_post_args =
+    \ [ '--module-rgx=[a-zA-Z_][a-zA-Z0-9_]*$',
+    \   '--max-line-length', '120',
+    \   '--indent-string="    "',
+    \   '--disable=line-too-long,missing-docstring,' .
+    \      'too-many-public-methods,too-few-public-methods,' .
+    \      'not-callable,locally-disabled,bad-continuation' ]
+" no-name-in-module
