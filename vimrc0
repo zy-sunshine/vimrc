@@ -260,7 +260,6 @@ let g:vimrc_email='zy.netsec@gmail.com'
 let g:vimrc_homepage='http://www.hackos.org'
 
 nmap <F10> :AuthorInfoDetect<cr>
-nmap <F2>  :cd %:p:h <Bar> new<Space>
 
 nmap ,c :FufFileWithCurrentBufferDir<CR>
 nmap ,f :FufFile<CR>
@@ -275,15 +274,58 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:syntastic_python_checkers = ['pylint']
+"let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_python_checkers = ['flake8']
+let g:syntastic_python_flake8_post_args =
+    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221',
+    \   '--max-line-length=120',
+    \   '--builtins=_' ]
 let g:syntastic_python_pylint_post_args =
     \ [ '--module-rgx=[a-zA-Z_][a-zA-Z0-9_]*$',
     \   '--max-line-length', '120',
     \   '--indent-string="    "',
+    \   '--load-plugins', 'pylint_django',
     \   '--disable=line-too-long,missing-docstring,' .
     \      'too-many-public-methods,too-few-public-methods,' .
-    \      'not-callable,locally-disabled,bad-continuation' ]
+    \      'not-callable,locally-disabled,bad-continuation,' .
+    \      'attribute-defined-outside-init' ]
 " no-name-in-module
+let g:ycm_server_python_interpreter = '/usr/bin/python2'
+
+function! ToggleQuickFix()
+  if exists("g:qwindow")
+    lclose
+    lclose
+    unlet g:qwindow
+  else
+    try
+      lopen 10
+      let g:qwindow = 1
+    catch
+      echo "No Errors found!"
+    endtry
+  endif
+endfunction
+
+nmap <script> <silent> <F2> :call ToggleQuickFix()<CR>
+function! <SID>LocationPrevious()
+  try
+    lprev
+  catch /^Vim\%((\a\+)\)\=:E553/
+    llast
+  endtry
+endfunction
+function! <SID>LocationNext()
+  try
+    lnext
+  catch /^Vim\%((\a\+)\)\=:E553/
+    lfirst
+  endtry
+endfunction
+nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
+nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
+nmap <silent> sp    <Plug>LocationPrevious
+nmap <silent> sn    <Plug>LocationNext
