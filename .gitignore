@@ -1,1 +1,6 @@
 *.pyc
+*.pyd
+*.pyo
+*~
+*.swp
+.netrwhist
