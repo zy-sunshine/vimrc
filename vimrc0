@@ -357,7 +357,7 @@ let g:pymode_lint = 0
 
 let g:pymode_rope_completion = 1
 let g:pymode_rope_complete_on_dot = 1
-let g:pymode_rope_completion_bind = '<C-m>'
+let g:pymode_rope_completion_bind = '<C-l>'
 let g:pymode_rope_autoimport = 1
 let g:pymode_rope_autoimport_modules = ['os', 'shutil', 'datetime']
 let g:pymode_rope_autoimport_import_after_complete = 1
@@ -417,3 +417,8 @@ vnoremap <leader>''' <esc>`<i'''<esc>`>a'''<esc>
 " disable esc function to force use <c-c>
 inoremap <esc> <nop>
 inoremap jk <esc>
+
+" add ipdb map
+iabbrev ipdb import ipdb; ipdb.set_trace()
+iabbrev @@    zy.netsec@gmail.com
+iabbrev ccopy Copyright 2017 Zhang Yang, all rights reserved.
