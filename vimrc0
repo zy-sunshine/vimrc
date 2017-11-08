@@ -1,9 +1,13 @@
 scriptencoding utf-8
 set encoding=utf-8
 " vimrc
+" Pathogen load
+filetype off
 call pathogen#infect()
 "call pathogen#runtime_append_all_bundles()
 call pathogen#helptags()
+filetype plugin indent on
+syntax on
 
 "*** indentation ***"
 set smartindent
@@ -17,7 +21,7 @@ set tabstop=4
 set softtabstop=4
 set hidden
 set expandtab
-set textwidth=79
+set textwidth=80
 
 " terminal and gui settings
 "set term=ansi
@@ -151,7 +155,7 @@ iab __nowdate__ <C-r>=strftime('%c')<CR>
 "iab is <script type="text/javascript"></script>
 
 map <F12> ms:call AddHTML()<cr>'s
-function AddHTML()
+function! AddHTML()
     let n = line('.') - 1
     call append(n,"<html>")
     let n = n+1
@@ -220,11 +224,6 @@ function! ReplaceBlank()
     "return join(lines, "\n")
 endfunction
 
-" Automatic updating vimrc
-"if has("autocmd")
-"    autocmd bufwritepost .vimrc source $MYVIMRC
-"endif
-
 autocmd BufReadPost *
             \ if line("'\"")>0&&line("'\"")<=line("$") |
             \    exe "normal g'\"" |
@@ -280,7 +279,7 @@ let g:syntastic_check_on_wq = 0
 "let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_python_flake8_post_args =
-    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221',
+    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261',
     \   '--max-line-length=120',
     \   '--builtins=_' ]
 let g:syntastic_python_pylint_post_args =
@@ -293,7 +292,6 @@ let g:syntastic_python_pylint_post_args =
     \      'not-callable,locally-disabled,bad-continuation,' .
     \      'attribute-defined-outside-init' ]
 " no-name-in-module
-let g:ycm_server_python_interpreter = '/usr/bin/python2'
 
 function! ToggleQuickFix()
   if exists("g:qwindow")
@@ -329,3 +327,84 @@ nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPreviou
 nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
 nmap <silent> sp    <Plug>LocationPrevious
 nmap <silent> sn    <Plug>LocationNext
+
+let g:ycm_server_python_interpreter = '/usr/bin/python2'
+nnoremap ,jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" Settings for ctrlp
+" cd ~/.vim/bundle
+" git clone https://github.com/kien/ctrlp.vim.git
+let g:ctrlp_max_height = 30
+"let wildignore=*.pyc
+"let wildignore+=*_build/*
+"let wildignore+=**/coverage/*
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+" Settings for python-mode
+" cd ~/.vim/bundle
+" git clone https://github.com/klen/python-mode
+"map <Leader>g: call RopeGotoDefinition()<CR>
+let g:pymode_virtualenv = 1
+let g:pymode_rope = 1
+let g:pymode_breakpoint = 1
+
+let g:pymode_lint = 0
+
+let g:pymode_rope_completion = 1
+let g:pymode_rope_complete_on_dot = 1
+let g:pymode_rope_completion_bind = '<C-m>'
+let g:pymode_rope_autoimport = 1
+let g:pymode_rope_autoimport_modules = ['os', 'shutil', 'datetime']
+let g:pymode_rope_autoimport_import_after_complete = 1
+
+"let ropevim_enable_shortcuts = 1
+"let g:pymode_rope_goto_def_newwin = 'vnew'
+"let g:pymode_rope_extended_complete = 1
+"let g:pymode_syntax = 1
+"let g:pymode_syntax_builtin_objs = 0
+"let g:pymode_syntax_builtin_funcs = 0
+"map <Leader>b Oimport ipdb; ipdb.set_trace()  # BREAKPOINT<C-c>
+
+" Better navicating through omnicomplete option list
+"set completeopt=longest,menuone
+"function! OmniPopup(action)
+"    if pumvisible()
+"        if a:action == 'j'
+"            return "\<C-N>"
+"        elseif a:action == 'k'
+"            return "\<C-P>"
+"        endif
+"    endif
+"    return a:action
+"endfunction
+
+"inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
+"inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
+
+" Python folding
+" mkdir -p ~/.vim/ftplugin
+" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
+set nofoldenable
+
+" bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
+" Every unnecessary keystroke that can be saved is good for your health :)
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+
+" Shortcut to open vimrc
+nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
+
+" Automatic updating vimrc
+if has("autocmd")
+    autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
+endif
+
+nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
