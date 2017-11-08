@@ -406,9 +406,14 @@ if has("autocmd")
     autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
 endif
 
+" add " ' wrap functions
 nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
 
 vnoremap <leader>" <esc>`<i"<esc>`>a"<esc>
 vnoremap <leader>' <esc>`<i'<esc>`>a'<esc>
 vnoremap <leader>''' <esc>`<i'''<esc>`>a'''<esc>
+
+" disable esc function to force use <c-c>
+inoremap <esc> <nop>
+inoremap jk <esc>
