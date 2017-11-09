@@ -453,6 +453,7 @@ if has("autocmd")
 endif
 
 " Operator-Pending Mappings
+" more complicated: http://learnvimscriptthehardway.stevelosh.com/chapters/16.html
 " exmaples
 " Keys   Operator   Movement
 " ----   --------   -------------
@@ -478,3 +479,6 @@ onoremap ' i'
 onoremap f' :<c-u>normal! f'vi'<cr>
 " inside backward "
 onoremap b' :<c-u>normal! F'vi'<cr>
+
+" select function
+onoremap <silent> F :<C-U>normal! 0f(hviw<CR>
