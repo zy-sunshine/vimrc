@@ -114,13 +114,6 @@ set encoding=utf-8
 set fileencoding=utf-8
 "e ++ff=unix
 
-" Omnicompletion for Python
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType vim set omnifunc=syntaxcomplete#Complete
-autocmd FileType c set omnifunc=ccomplete#Complete
 inoremap <C-space> <C-x><C-O>
 
 
@@ -139,11 +132,6 @@ for p in sys.path:
     if os.path.isdir(p):
         vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
 EOF
-
-" 打开 scons 默认为 python
-au BufNewFile,BufRead SCons* set filetype=python
-"au BufNewFile,BufRead SConscript set filetype=python
-"au BufNewFile,BufRead SConstruct set filetype=python
 
 map  <F7>   <Plug>ShowFunc
 map! <F7>   <Plug>ShowFunc
@@ -176,9 +164,6 @@ function! AddHTML()
     call append(n,"</html>")
     echohl WarningMsg | echo "Successful in adding the html format." | echohl None
 endf
-
-au BufReadCmd   *.epub      call zip#Browse(expand("<amatch>"))
-au BufReadCmd   *.apk      call zip#Browse(expand("<amatch>"))
 
 map <C-c> "+y
 "map <C-v> "+p
@@ -224,12 +209,8 @@ function! ReplaceBlank()
     "return join(lines, "\n")
 endfunction
 
-autocmd BufReadPost *
-            \ if line("'\"")>0&&line("'\"")<=line("$") |
-            \    exe "normal g'\"" |
-            \ endif
-
 let mapleader=","
+let maplocalleader=","
 
 if has("cscope")
     "set csprg=/usr/bin/cscope             "指定用来执行 cscope的命令,这里不一定是/usr/bin/cscope,你自己得找到这个位置
@@ -259,11 +240,6 @@ let g:vimrc_email='zy.netsec@gmail.com'
 let g:vimrc_homepage='http://www.hackos.org'
 
 nmap <F10> :AuthorInfoDetect<cr>
-
-nmap ,c :FufFileWithCurrentBufferDir<CR>
-nmap ,f :FufFile<CR>
-nmap ,b :FufBuffer<CR>
-nmap ,t :FufTaggedFile<CR>
 
 set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
 
@@ -344,7 +320,12 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
-
+let g:ctrlp_prompt_mappings = {
+    \ 'PrtSelectMove("j")':   ['<c-n>'],
+    \ 'PrtSelectMove("k")':   ['<c-p>'],
+    \ 'PrtHistory(-1)':       ['<down>', '<c-j>'],
+    \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
+    \ }
 " Settings for python-mode
 " cd ~/.vim/bundle
 " git clone https://github.com/klen/python-mode
@@ -357,7 +338,7 @@ let g:pymode_lint = 0
 
 let g:pymode_rope_completion = 1
 let g:pymode_rope_complete_on_dot = 1
-let g:pymode_rope_completion_bind = '<C-l>'
+let g:pymode_rope_completion_bind = '<C-;>'
 let g:pymode_rope_autoimport = 1
 let g:pymode_rope_autoimport_modules = ['os', 'shutil', 'datetime']
 let g:pymode_rope_autoimport_import_after_complete = 1
@@ -393,18 +374,13 @@ set nofoldenable
 
 " bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
 " Every unnecessary keystroke that can be saved is good for your health :)
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+nnoremap <c-h> <c-w>h
 
 " Shortcut to open vimrc
 nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
-
-" Automatic updating vimrc
-if has("autocmd")
-    autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
-endif
 
 " add " ' wrap functions
 nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
@@ -417,8 +393,61 @@ vnoremap <leader>''' <esc>`<i'''<esc>`>a'''<esc>
 " disable esc function to force use <c-c>
 inoremap <esc> <nop>
 inoremap jk <esc>
+inoremap kj <esc>
 
 " add ipdb map
 iabbrev ipdb import ipdb; ipdb.set_trace()
 iabbrev @@    zy.netsec@gmail.com
 iabbrev ccopy Copyright 2017 Zhang Yang, all rights reserved.
+
+inoremap <C-s> <esc>:wi
+
+inoremap <C-b> <Left>
+inoremap <C-f> <Right>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+inoremap <C-d> <Del>
+
+" Automatic updating vimrc
+if has("autocmd")
+    augroup augrou_default
+        autocmd!
+        autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
+    augroup END
+
+    augroup augroup_unkown
+        autocmd!
+        autocmd BufReadPost *
+                \ if line("'\"")>0&&line("'\"")<=line("$") |
+                \    exe "normal g'\"" |
+                \ endif
+    augroup END
+
+    " Omnicompletion for Python
+    augroup filetype_ominifunc
+        autocmd!
+        autocmd FileType python set omnifunc=pythoncomplete#Complete
+        autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+        autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+        autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+        autocmd FileType vim set omnifunc=syntaxcomplete#Complete
+        autocmd FileType c set omnifunc=ccomplete#Complete
+    augroup END
+
+    augroup filetype_python
+        autocmd!
+        autocmd FileType python     nnoremap <buffer> <localleader>c I#<esc>
+    augroup END
+
+    augroup filetype_alias
+        autocmd!
+        " 打开 scons 默认为 python
+        autocmd BufNewFile,BufRead SCons* set filetype=python
+        "autocmd BufNewFile,BufRead SConscript set filetype=python
+        "autocmd BufNewFile,BufRead SConstruct set filetype=python
+        autocmd BufReadCmd   *.epub      call zip#Browse(expand("<amatch>"))
+        autocmd BufReadCmd   *.apk      call zip#Browse(expand("<amatch>"))
+    augroup END
+
+endif
