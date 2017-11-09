@@ -451,3 +451,30 @@ if has("autocmd")
     augroup END
 
 endif
+
+" Operator-Pending Mappings
+" exmaples
+" Keys   Operator   Movement
+" ----   --------   -------------
+"  dw     Delete     to next word
+"  ci(    Change     inside parens
+"  yt,    Yank       until comma
+"
+" when we saying "delete parameters", vim translates to "delete inside parentheses"
+onoremap ( i(
+" inside forward parentheses
+onoremap f( :<c-u>normal! f(vi(<cr>
+" inside backward parentheses
+onoremap b) :<c-u>normal! F)vi(<cr>
+
+onoremap " i"
+" inside forward "
+onoremap f" :<c-u>normal! f"vi"<cr>
+" inside backward "
+onoremap b" :<c-u>normal! F"vi"<cr>
+
+onoremap ' i'
+" inside forward "
+onoremap f' :<c-u>normal! f'vi'<cr>
+" inside backward "
+onoremap b' :<c-u>normal! F'vi'<cr>
