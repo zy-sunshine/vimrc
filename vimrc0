@@ -326,6 +326,10 @@ let g:ctrlp_prompt_mappings = {
     \ 'PrtHistory(-1)':       ['<down>', '<c-j>'],
     \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
     \ }
+let g:ctrlp_working_path_mode = 0
+nnoremap <C-p> :CtrlPCurWD<cr>
+nnoremap <C-t> :CtrlPBuffer<cr>
+
 " Settings for python-mode
 " cd ~/.vim/bundle
 " git clone https://github.com/klen/python-mode
