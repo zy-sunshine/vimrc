@@ -108,8 +108,10 @@ class VimAppendHandler(logging.Handler):
     def emit(self, record):
         """ Emit the logging message """
         b = self.__findBuffer()
+        msg = self.__formatter.format(record)
+        print(msg)
         if b:
-            b.append(self.__formatter.format(record))
+            b.append(msg)
 
 
 def setLoggerVerbosity():
@@ -172,7 +174,7 @@ class AutoTag(object):  # pylint: disable=R0902
                         AutoTag.LOG.warn("Could not stat tags file %s", tags_file)
                         break
                     if size > AutoTag.MAXTAGSFILESIZE:
-                        AutoTag.LOG.info("Ignoring too big tags file %s", tags_file)
+                        AutoTag.LOG.warn("Ignoring too big tags file %s", tags_file)
                         break
                 ret = (fname, tags_file)
                 break
