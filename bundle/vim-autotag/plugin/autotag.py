@@ -151,6 +151,7 @@ class AutoTag(object):  # pylint: disable=R0902
         self.ctags_cmd = vim_global("CtagsCmd")
         self.tags_file = str(vim_global("TagsFile"))
         self.tags_dir = str(vim_global("TagsDir"))
+        self.tags_args = str(vim_global("TagsArgs"))
         self.parents = os.pardir * (len(os.path.split(self.tags_dir)) - 1)
         self.count = 0
         self.stop_at = vim_global("StopAt")
@@ -245,9 +246,9 @@ class AutoTag(object):  # pylint: disable=R0902
             sources = [os.path.join(self.parents + s) for s in sources]
         self.stripTags(tags_file, sources)
         if self.tags_file:
-            cmd = "%s -f %s -a " % (self.ctags_cmd, self.tags_file)
+            cmd = "%s %s -f %s -a" % (self.ctags_cmd, self.tags_args, self.tags_file)
         else:
-            cmd = "%s -a " % (self.ctags_cmd,)
+            cmd = "%s %s -a" % (self.tags_args, self.ctags_cmd)
         for source in sources:
             if os.path.isfile(os.path.join(tags_dir, self.tags_dir, source)):
                 cmd += ' "%s"' % source
