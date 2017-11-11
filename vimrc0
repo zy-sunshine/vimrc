@@ -47,7 +47,7 @@ augroup END
 " When you want to paste large blocks of code into vim, press F2 before you
 " paste. At the bottom you should see ``-- INSERT (paste) --``.
 
-set pastetoggle=<C-v>
+"set pastetoggle=<F12>
 set clipboard=unnamed
 
 
@@ -71,11 +71,17 @@ noremap <Leader>E :qa!<CR>   " Quit all windows
 " Shortcut to open vimrc
 nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
 
-" easier moving between tabs
-nnoremap <C-n> <esc>:tabprevious<CR>
-nnoremap <C-m> <esc>:tabnext<CR>
+" easier moving between tabs and buffers
+execute "set <M-k>=\ek"
+execute "set <M-j>=\ej"
+execute "set <M-h>=\eh"
+execute "set <M-l>=\el"
+nnoremap <M-k> <esc>:bprevious<CR>
+nnoremap <M-j> <esc>:bnext<CR>
+nnoremap <M-h> <esc>:tabprevious<CR>
+nnoremap <M-l> <esc>:tabnext<CR>
 nnoremap <C-t> <esc>:tabnew<CR>
-nnoremap <C-w> <esc>:tabclose<CR>
+nnoremap <C-e> <esc>:tabclose<CR>
 
 " map sort function to a key
 "" vnoremap <Leader>s :sort<CR>
@@ -191,10 +197,10 @@ set confirm
 
 " bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
 " Every unnecessary keystroke that can be saved is good for your health :)
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-l> <c-w>l
-nnoremap <c-h> <c-w>h
+nnoremap <C-j> <c-w>j
+nnoremap <C-k> <c-w>k
+nnoremap <C-l> <c-w>l
+nnoremap <C-h> <c-w>h
 
 nnoremap <C-x> :bdelete<cr>
 nnoremap <C-q> :q<cr>
@@ -295,16 +301,17 @@ nnoremap <C-b> :CtrlPBuffer<cr>
 "" let g:pymode_syntax_builtin_funcs = 0
 "" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
 
-let g:pymode = 1
-let g:pymode_rope_completion = 1
-let g:pymode_rope_complete_on_dot = 1
-let g:pymode_rope_completion_bind = '<C-m>'
-let g:pymode_rope_autoimport = 1
-let g:pymode_rope_autoimport_modules = ['os', 'sys', 'shutil', 'datetime']
+"" let g:pymode = 1
+"" let g:pymode_rope_completion = 1
+"" let g:pymode_rope_complete_on_dot = 1
+"" let g:pymode_rope_completion_bind = '<C-m>'
+"" let g:pymode_rope_autoimport = 1
+"" let g:pymode_rope_autoimport_modules = ['os', 'sys', 'shutil', 'datetime']
 
 " Settings for jedi-vim
 " cd ~/.vim/bundle
 " git clone git://github.com/davidhalter/jedi-vim.git
+let g:jedi#completions_command = "<C-M>"
 "" let g:jedi#usages_command = "<leader>z"
 "" let g:jedi#popup_on_dot = 0
 "" let g:jedi#popup_select_first = 0
@@ -439,3 +446,4 @@ set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
 nnoremap U <c-r>
 nnoremap <c-r> :NERDTreeFind<cr>
 nnoremap <F4> :NERDTreeToggle<cr>
+let NERDTreeQuitOnOpen = 1
