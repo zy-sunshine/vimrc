@@ -1,20 +1,144 @@
+set nocompatible
+" Sample .vimrc file by Martin Brochhaus
+" Presented at PyCon APAC 2012
+
+
+" ============================================
+" Note to myself:
+" DO NOT USE <C-z> FOR SAVING WHEN PRESENTING!
+" ============================================
+
+
+" Automatic reloading of .vimrc
+" Automatic updating vimrc
+if has("autocmd")
+    augroup augrou_default
+        autocmd!
+        autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
+    augroup END
+endif
+
+if has('mouse')
+    set mouse=a
+endif
+
+" ## encoding
 scriptencoding utf-8
 set encoding=utf-8
-" vimrc
-" Pathogen load
+" To check the unix CR/LF file format
+set fileformat=unix
+set ffs=unix
+set encoding=utf-8
+set fileencoding=utf-8
+"e ++ff=unix
+
+
+" Put these in an autocmd group, so that we can delete them easily.
+augroup autocmd_gotoLastPosition
+    autocmd!
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    autocmd BufReadPost *
+      \ if line("'\"") >= 1 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
+augroup END
+
+" Better copy & paste
+" When you want to paste large blocks of code into vim, press F2 before you
+" paste. At the bottom you should see ``-- INSERT (paste) --``.
+
+set pastetoggle=<F2>
+set clipboard=unnamed
+
+
+" Mouse and backspace
+"" set mouse=a  " on OSX press ALT and click
+"" set bs=2     " make backspace behave like normal again
+
+
+" Rebind <Leader> key
+" I like to have it here becuase it is easier to reach than the default and
+" it is next to ``m`` and ``n`` which I use for navigating between tabs.
+let mapleader=","
+let maplocalleader=","
+
+" Quick quit command
+noremap <Leader>e :quit<CR>  " Quit current window
+noremap <Leader>E :qa!<CR>   " Quit all windows
+
+" Shortcut to open vimrc
+nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
+
+" easier moving between tabs
+nnoremap <C-n> <esc>:tabprevious<CR>
+nnoremap <C-m> <esc>:tabnext<CR>
+nnoremap <C-t> <esc>:tabnew<CR>
+nnoremap <C-w> <esc>:tabclose<CR>
+
+" map sort function to a key
+"" vnoremap <Leader>s :sort<CR>
+
+
+" easier moving of code blocks
+" Try to go into visual mode (v), thenselect several lines of code here and
+" then press ``>`` several times.
+vnoremap < <gv  " better indentation
+vnoremap > >gv  " better indentation
+
+
+" Show whitespace
+" MUST be inserted BEFORE the colorscheme command
+"autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+"au InsertLeave * match ExtraWhitespace /\s\+$/
+
+" Enable syntax highlighting
+" You need to reload this file for the change to apply
 filetype off
-call pathogen#infect()
-"call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
 filetype plugin indent on
 syntax on
 
-"*** indentation ***"
+" Color scheme
+" mkdir -p ~/.vim/colors && cd ~/.vim/colors
+" Wget -O wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
+"set t_Co=256
+"color wombat256mod
+
+" ## Color scheme
+set t_Co=256
+let g:solarized_termcolors=256
+set background=dark
+let g:solarized_visibility="high"
+colorscheme solarized
+
+"" Speed up response to ESC key
+"set notimeout
+"set ttimeout
+"set timeoutlen=100
+
+" show tabs and spaces
+"set list
+"set listchars=tab:>-,extends:#
+set listchars=tab:»·,trail:·
+set list
+
+" Showing line numbers and length
+set number  " show line numbers
+set nowrap  " don't automatically wrap on load
+set fo-=t   " don't automatically wrap text when typing
+set colorcolumn=80
+"" highlight ColorColumn ctermbg=233
+
+" Useful settings
+set history=700
+set undolevels=700
+
+" Real programmers don't use TABs but spaces
+" indentation
 set smartindent
 set shiftwidth=4
 set shiftround
-" 显示标题 与 laststatus 相似
-set showtabline=2
 set preserveindent
 set smarttab
 set tabstop=4
@@ -23,160 +147,85 @@ set hidden
 set expandtab
 set textwidth=80
 
-" terminal and gui settings
-"set term=ansi
-"set termencoding=utf-8
-"set encoding=utf-8
-set backspace=indent,eol,start
-"set visualbell
-"set smartcase
-"set noerrorbells
-"set showmatch
-"set showcmd
-"set completeopt=menuone,longest,preview
-"set complete+=k
-"set iskeyword=@,48-57,192-255
-"set iskeyword-=:
-"set modeline
 
-" 确认退出
-set confirm
-
-"w!! writes the file using sudo
-cmap w!! w !sudo tee % >/dev/null
-
-" 使用鼠标
-set mouse=a
-" 显示命令 at bottom
-set showcmd
-
-"*** searching ***"
-" 搜索时高亮
+" ## Make search case insensitive
 set hlsearch
-" {} [] 时显示匹配项
-set showmatch "potentially slow, turn off in big files.
-" 实时匹配
+" show where the pattern match realtime
 set incsearch
 set ignorecase
-" 一行字过长不折行
-set nowrap
-set wrapscan
-" 一行很长移动不跳
-map <Up> gk
-map <Down> gj
+"set smartcase
 
+" Disable stupid backup and swap files - they trigger too many events
+" for file system watchers
+"" set nobackup
+"" set nowritebackup
+"" set noswapfile
+
+
+" Setup Pathogen to manage your plugins
+" mkdir -p ~/.vim/autoload ~/.vim/bundle
+" curl -so ~/.vim/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+" Now you can install any plugin into a .vim/bundle/plugin-name/ folder
+" Pathogen load
+call pathogen#infect()
+"call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+" =====================================================
+" Normal key mappings, especially for C-*
+" =====================================================
+"
+" Bind nohl
+" Removes highlight of your last search
+" ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
+"" noremap <C-n> :nohl<CR>
+"" vnoremap <C-n> :nohl<CR>
+"" inoremap <C-n> :nohl<CR>
+
+" Quicksave command
+noremap <C-s> :update<CR>
+vnoremap <C-s> <C-C>:update<CR>
+inoremap <C-s> <C-O>:update<CR>
+
+" bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
+" Every unnecessary keystroke that can be saved is good for your health :)
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+nnoremap <c-h> <c-w>h
+
+nnoremap <C-x> :bdelete<cr>
+nnoremap <C-q> :q<cr>
+
+inoremap <C-b> <Left>
+inoremap <C-f> <Right>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+inoremap <C-d> <Del>
+inoremap <C-e> <End>
+inoremap <C-a> <Home>
+
+"======================================================
+" Move keys
+" =====================================================
 
 " Jump 5 lines when running out of the screen
 set scrolljump=5
 " Indicate jump out of the screen when 3 lines before end of the screen
 set scrolloff=3
 
-" Highligh current line
-"set cursorline
-"set cursorcolumn
-set ruler
-set statusline=[TYPE=%Y]\ [ENC=%{&fenc}]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]
-hi StatusLine term=bold,reverse cterm=bold ctermfg=7 ctermbg=0
-hi StatusLineNC term=reverse cterm=bold ctermfg=8
-set t_Co=256
-" 设置显示尾部状态栏 与 showtabline 相似
-set laststatus=2
+" =====================================================
+" Text shortcut
+" =====================================================
 
-" Speed up response to ESC key
-set notimeout
-set ttimeout
-set timeoutlen=100
-
-"*** Color scheme ***"
-let g:solarized_termcolors=256
-set background=dark
-let g:solarized_visibility="high"
-colorscheme solarized
-
-" 打开当前目录文件列表
-map <F3> :Explore<CR>
-" 函数和变量列表
-map <F4> :TlistToggle<CR>
-" 更新函数变量表 间隔时间 for tag list
-set updatetime=100
-
-" show tabs and spaces
-"set list
-"set listchars=tab:>-,extends:#
-" 突出显示 tab 和尾部空格
-set listchars=tab:»·,trail:·
-set list
-
-" To check the unix CR/LF file format
-set fileformat=unix
-set ffs=unix
-set encoding=utf-8
-set fileencoding=utf-8
-"e ++ff=unix
-
-inoremap <C-space> <C-x><C-O>
-
-
-"*** python option ***"
-"pydiction 1.2 python auto complete
-filetype plugin on
-let g:pydiction_location = '~/.vim/tools/pydiction-1.2/complete-dict'
-"defalut g:pydiction_menu_height == 15
-"let g:pydiction_menu_height = 20
-    " Import Python paths
-    python << EOF
-import os
-import sys
-import vim
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
-
-map  <F7>   <Plug>ShowFunc
-map! <F7>   <Plug>ShowFunc
-
-
-"iab id <c-r>=strftime("20%y %m %d %H:%M:%S")<cr>
-iab __nowdate__ <C-r>=strftime('%c')<CR>
-"iab in zhangyang09
-"iab is <script type="text/javascript"></script>
-
-map <F12> ms:call AddHTML()<cr>'s
-function! AddHTML()
-    let n = line('.') - 1
-    call append(n,"<html>")
-    let n = n+1
-    call append(n,"<head>")
-    let n = n+1
-    call append(n,"<link rel=\"stylesheet\" href=\"\" type=\"text/css\" />")
-    let n = n+1
-    call append(n,"<script type=\"text/javascript\" src=\"\"></script>")
-    let n = n+1
-    call append(n,"<title></title>")
-    let n = n+1
-    call append(n,"</head>")
-    let n = n+1
-    call append(n,"<body>")
-    let n = n+1
-    call append(n,"</body>")
-    let n = n+1
-    call append(n,"</html>")
-    echohl WarningMsg | echo "Successful in adding the html format." | echohl None
-endf
-
-map <C-c> "+y
-"map <C-v> "+p
-"map <C-q> :q
-"map <C-s> :w
-
+noremap - :call ReplaceBlank()<CR>
 function! s:_replace_blank(text)
     let text = a:text
     let text_new = substitute(text, "[ \t]*$", "", "")
     return text_new
 endfunction
-noremap - :call ReplaceBlank1()<CR>
-function! ReplaceBlank1()
+function! ReplaceBlank()
     let n = line(".")
     let line = getline(n)
     let line_new = <SID>_replace_blank(line)
@@ -185,65 +234,142 @@ function! ReplaceBlank1()
     endif
 endfunction
 
-"noremap - :%s/\v[ ]+$//g<CR>
-"noremap - :call ReplaceBlank()<CR>
-function! ReplaceBlank()
-    let lnum1 = line("'<")
-    let lnum2 = line("'>")
-    "let lines = getline(lnum1, lnum2)
-    let l_num = lnum1
-    for line in lines
-        let line_new = <SID>_replace_blank(line)
-        if line_new != line
-            call setline(l_num, line_new)
-        endif
-        let l_num =  l_num + 1
-    endfor
-    "echo line("'<")
-    "let [lnum1, col1] = getpos("'<")[1:2]
-    "let [lnum2, col2] = getpos("'>")[1:2]
-    "let lines = getline(lnum1, lnum2)
-    "echo lines
-    "let lines[-1] = lines[-1][: col2 - 2]
-    "let lines[0] = lines[0][col1 - 1:]
-    "return join(lines, "\n")
-endfunction
+" =====================================================
+" abbreviation
+" =====================================================
+" add ipdb
+iabbrev ipdb import ipdb; ipdb.set_trace()
+" email
+iabbrev @@    zy.netsec@gmail.com
+" copyright
+iabbrev ccopy Copyright 2017 Zhang Yang, all rights reserved.
 
-let mapleader=","
-let maplocalleader=","
+" ============================================================================
+" Python IDE Setup
+" ============================================================================
 
-if has("cscope")
-    "set csprg=/usr/bin/cscope             "指定用来执行 cscope的命令,这里不一定是/usr/bin/cscope,你自己得找到这个位置
-    set csto=1                            "先搜索tags标签文件，再搜索cscope数据库
-    set cst                               "使用|:cstag|(:cs findg)，而不是缺省的:tag
-    "set nocsverb                          "不显示添加数据库是否成功
-    " add any database in current directory
-    "if filereadable("cscope.out")
-    "    cs add cscope.out
-    "endif
-    set csverb                            "显示添加成功与否
-endif
-if filereadable("vimrc")
-    source vimrc
-endif
-nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
-let g:vimrc_author='Zhang Yang'
-let g:vimrc_email='zy.netsec@gmail.com'
-let g:vimrc_homepage='http://www.hackos.org'
+" Settings for vim-powerline
+" cd ~/.vim/bundle
+" git clone git://github.com/Lokaltog/vim-powerline.git
+set laststatus=2
 
-nmap <F10> :AuthorInfoDetect<cr>
 
-set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+" Settings for ctrlp
+" cd ~/.vim/bundle
+" git clone https://github.com/kien/ctrlp.vim.git
+let g:ctrlp_max_height = 30
+"" set wildignore+=*.pyc
+"" set wildignore+=*_build/*
+"" set wildignore+=*/coverage/*
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+let g:ctrlp_prompt_mappings = {
+    \ 'PrtSelectMove("j")':   ['<c-n>'],
+    \ 'PrtSelectMove("k")':   ['<c-p>'],
+    \ 'PrtHistory(-1)':       ['<down>', '<c-j>'],
+    \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
+    \ }
+let g:ctrlp_working_path_mode = 0
+nnoremap <C-p> :CtrlPCurWD<cr>
+nnoremap <C-b> :CtrlPBuffer<cr>
 
-" syntastic
+" Settings for python-mode
+" Note: I'm no longer using this. Leave this commented out
+" and uncomment the part about jedi-vim instead
+" cd ~/.vim/bundle
+" git clone https://github.com/klen/python-mode
+"" map <Leader>g :call RopeGotoDefinition()<CR>
+"" let ropevim_enable_shortcuts = 1
+"" let g:pymode_rope_goto_def_newwin = "vnew"
+"" let g:pymode_rope_extended_complete = 1
+"" let g:pymode_breakpoint = 0
+"" let g:pymode_syntax = 1
+"" let g:pymode_syntax_builtin_objs = 0
+"" let g:pymode_syntax_builtin_funcs = 0
+"" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
+
+let g:pymode = 1
+let g:pymode_rope_completion = 1
+let g:pymode_rope_complete_on_dot = 1
+let g:pymode_rope_completion_bind = '<C-m>'
+let g:pymode_rope_autoimport = 1
+let g:pymode_rope_autoimport_modules = ['os', 'sys', 'shutil', 'datetime']
+
+" Settings for jedi-vim
+" cd ~/.vim/bundle
+" git clone git://github.com/davidhalter/jedi-vim.git
+"" let g:jedi#usages_command = "<leader>z"
+"" let g:jedi#popup_on_dot = 0
+"" let g:jedi#popup_select_first = 0
+"" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
+"let g:jedi#force_py_version = 3
+" Add the virtualenv's site-packages to vim path
+let g:virtualenv_auto_activate = 1
+
+" Better navigating through omnicomplete option list
+" See http://stackoverflow.com/questions/2170023/how-to-map-keys-for-popup-menu-in-vim
+"" set completeopt=longest,menuone
+"" function! OmniPopup(action)
+""     if pumvisible()
+""         if a:action == 'j'
+""             return "\<C-N>"
+""         elseif a:action == 'k'
+""             return "\<C-P>"
+""         endif
+""     endif
+""     return a:action
+"" endfunction
+
+"" inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
+"" inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
+
+
+" Python folding
+" mkdir -p ~/.vim/ftplugin
+" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
+set nofoldenable
+
+" ## edit key mappings
+
+" Shortcut to open vimrc
+nnoremap <Leader>ev :split ~/.vim/vimrc0<cr>
+
+" ### add " ' wrap functions
+nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
+
+vnoremap <leader>" <esc>`<i"<esc>`>a"<esc>
+vnoremap <leader>' <esc>`<i'<esc>`>a'<esc>
+vnoremap <leader>''' <esc>`<i'''<esc>`>a'''<esc>
+
+" disable esc function to force use <c-c>
+inoremap <esc> <nop>
+inoremap jk <esc>
+inoremap kj <esc>
+
+
+" omnicppcomplete
+nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
+" taglist_45
+" 函数和变量列表
+nnoremap <F4> :TlistToggle<CR>
+" 更新函数变量表 间隔时间 for tag list
+set updatetime=100
+
+" ### vim-autotags
+let g:autotagTagsFile = 'tags'
+let g:autotagmaxTagsFileSize = 104857600  " 100MB
+" custom tags args, adapt with omnicppcomplete
+let g:autotagTagsArgs = '--c++-kinds=+p --fields=+iaS --extra=+q'
+"let g:autotagVerbosityLevel = 10 " DEBUG
+
+" ### syntastic
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -255,7 +381,7 @@ let g:syntastic_check_on_wq = 0
 "let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_python_flake8_post_args =
-    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261',
+    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261,E305',
     \   '--max-line-length=120',
     \   '--builtins=_' ]
 let g:syntastic_python_pylint_post_args =
@@ -303,197 +429,3 @@ nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPreviou
 nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
 nmap <silent> sp    <Plug>LocationPrevious
 nmap <silent> sn    <Plug>LocationNext
-
-let g:ycm_server_python_interpreter = '/usr/bin/python2'
-nnoremap ,jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-" Settings for ctrlp
-" cd ~/.vim/bundle
-" git clone https://github.com/kien/ctrlp.vim.git
-let g:ctrlp_max_height = 30
-"let wildignore=*.pyc
-"let wildignore+=*_build/*
-"let wildignore+=**/coverage/*
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ }
-let g:ctrlp_prompt_mappings = {
-    \ 'PrtSelectMove("j")':   ['<c-n>'],
-    \ 'PrtSelectMove("k")':   ['<c-p>'],
-    \ 'PrtHistory(-1)':       ['<down>', '<c-j>'],
-    \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
-    \ }
-let g:ctrlp_working_path_mode = 0
-nnoremap <C-p> :CtrlPCurWD<cr>
-nnoremap <C-t> :CtrlPBuffer<cr>
-
-" Settings for python-mode
-" cd ~/.vim/bundle
-" git clone https://github.com/klen/python-mode
-"map <Leader>g: call RopeGotoDefinition()<CR>
-let g:pymode_virtualenv = 1
-let g:pymode_rope = 1
-let g:pymode_breakpoint = 1
-
-let g:pymode_lint = 0
-
-let g:pymode_rope_completion = 1
-let g:pymode_rope_complete_on_dot = 1
-let g:pymode_rope_completion_bind = '<C-;>'
-let g:pymode_rope_autoimport = 1
-let g:pymode_rope_autoimport_modules = ['os', 'shutil', 'datetime']
-let g:pymode_rope_autoimport_import_after_complete = 1
-
-"let ropevim_enable_shortcuts = 1
-"let g:pymode_rope_goto_def_newwin = 'vnew'
-"let g:pymode_rope_extended_complete = 1
-"let g:pymode_syntax = 1
-"let g:pymode_syntax_builtin_objs = 0
-"let g:pymode_syntax_builtin_funcs = 0
-"map <Leader>b Oimport ipdb; ipdb.set_trace()  # BREAKPOINT<C-c>
-
-" Better navicating through omnicomplete option list
-"set completeopt=longest,menuone
-"function! OmniPopup(action)
-"    if pumvisible()
-"        if a:action == 'j'
-"            return "\<C-N>"
-"        elseif a:action == 'k'
-"            return "\<C-P>"
-"        endif
-"    endif
-"    return a:action
-"endfunction
-
-"inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
-"inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
-
-" Python folding
-" mkdir -p ~/.vim/ftplugin
-" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
-set nofoldenable
-
-" bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
-" Every unnecessary keystroke that can be saved is good for your health :)
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-l> <c-w>l
-nnoremap <c-h> <c-w>h
-
-" Shortcut to open vimrc
-nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
-
-" add " ' wrap functions
-nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-nnoremap <leader>' viw<esc>a'<esc>bi'<esc>lel
-
-vnoremap <leader>" <esc>`<i"<esc>`>a"<esc>
-vnoremap <leader>' <esc>`<i'<esc>`>a'<esc>
-vnoremap <leader>''' <esc>`<i'''<esc>`>a'''<esc>
-
-" disable esc function to force use <c-c>
-inoremap <esc> <nop>
-inoremap jk <esc>
-inoremap kj <esc>
-
-" save file with ctrl+s
-inoremap <C-s> <c-o>:w<cr>
-nnoremap <C-s> :w<cr>
-
-nnoremap <C-x> :bdelete<cr>
-nnoremap <C-w> :bunload<cr>
-
-" add ipdb map
-iabbrev ipdb import ipdb; ipdb.set_trace()
-iabbrev @@    zy.netsec@gmail.com
-iabbrev ccopy Copyright 2017 Zhang Yang, all rights reserved.
-
-inoremap <C-s> <esc>:wi
-
-inoremap <C-b> <Left>
-inoremap <C-f> <Right>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
-inoremap <C-b> <Left>
-inoremap <C-f> <Right>
-inoremap <C-d> <Del>
-inoremap <C-e> <End>
-inoremap <C-a> <Home>
-
-" Automatic updating vimrc
-if has("autocmd")
-    augroup augrou_default
-        autocmd!
-        autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
-    augroup END
-
-    augroup augroup_unkown
-        autocmd!
-        autocmd BufReadPost *
-                \ if line("'\"")>0&&line("'\"")<=line("$") |
-                \    exe "normal g'\"" |
-                \ endif
-    augroup END
-
-    " Omnicompletion for Python
-    augroup filetype_ominifunc
-        autocmd!
-        autocmd FileType python set omnifunc=pythoncomplete#Complete
-        autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-        autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-        autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-        autocmd FileType vim set omnifunc=syntaxcomplete#Complete
-        autocmd FileType c set omnifunc=ccomplete#Complete
-    augroup END
-
-    augroup filetype_python
-        autocmd!
-        autocmd FileType python     nnoremap <buffer> <localleader>c I#<esc>
-    augroup END
-
-    augroup filetype_alias
-        autocmd!
-        " 打开 scons 默认为 python
-        autocmd BufNewFile,BufRead SCons* set filetype=python
-        "autocmd BufNewFile,BufRead SConscript set filetype=python
-        "autocmd BufNewFile,BufRead SConstruct set filetype=python
-        autocmd BufReadCmd   *.epub      call zip#Browse(expand("<amatch>"))
-        autocmd BufReadCmd   *.apk      call zip#Browse(expand("<amatch>"))
-    augroup END
-
-endif
-
-" Operator-Pending Mappings
-" more complicated: http://learnvimscriptthehardway.stevelosh.com/chapters/16.html
-" exmaples
-" Keys   Operator   Movement
-" ----   --------   -------------
-"  dw     Delete     to next word
-"  ci(    Change     inside parens
-"  yt,    Yank       until comma
-"
-" when we saying "delete parameters", vim translates to "delete inside parentheses"
-onoremap ( i(
-" inside forward parentheses
-onoremap f( :<c-u>normal! f(vi(<cr>
-" inside backward parentheses
-onoremap b) :<c-u>normal! F)vi(<cr>
-
-onoremap " i"
-" inside forward "
-onoremap f" :<c-u>normal! f"vi"<cr>
-" inside backward "
-onoremap b" :<c-u>normal! F"vi"<cr>
-
-onoremap ' i'
-" inside forward "
-onoremap f' :<c-u>normal! f'vi'<cr>
-" inside backward "
-onoremap b' :<c-u>normal! F'vi'<cr>
-
-" select function
-onoremap <silent> F :<C-U>normal! 0f(hviw<CR>
