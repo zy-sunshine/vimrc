@@ -18,10 +18,6 @@ if has("autocmd")
     augroup END
 endif
 
-if has('mouse')
-    set mouse=a
-endif
-
 " ## encoding
 scriptencoding utf-8
 set encoding=utf-8
@@ -49,14 +45,16 @@ augroup END
 " When you want to paste large blocks of code into vim, press F2 before you
 " paste. At the bottom you should see ``-- INSERT (paste) --``.
 
-set pastetoggle=<F2>
+set pastetoggle=<C-v>
 set clipboard=unnamed
 
 
 " Mouse and backspace
 "" set mouse=a  " on OSX press ALT and click
 "" set bs=2     " make backspace behave like normal again
-
+if has('mouse')
+    set mouse=a
+endif
 
 " Rebind <Leader> key
 " I like to have it here becuase it is easier to reach than the default and
@@ -186,6 +184,8 @@ call pathogen#helptags()
 noremap <C-s> :update<CR>
 vnoremap <C-s> <C-C>:update<CR>
 inoremap <C-s> <C-O>:update<CR>
+" 确认退出
+set confirm
 
 " bind Ctrl+<movement> keys to move around the windows, instead of using Ctrl+w + <movement>
 " Every unnecessary keystroke that can be saved is good for your health :)
@@ -358,7 +358,7 @@ nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " taglist_45
 " 函数和变量列表
-nnoremap <F4> :TlistToggle<CR>
+nnoremap <F3> :TlistToggle<CR>
 " 更新函数变量表 间隔时间 for tag list
 set updatetime=100
 
@@ -429,3 +429,11 @@ nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPreviou
 nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
 nmap <silent> sp    <Plug>LocationPrevious
 nmap <silent> sn    <Plug>LocationNext
+
+" ### grep
+set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+
+" ### NerdTree
+nnoremap U <c-r>
+nnoremap <c-r> :NERDTreeFind<cr>
+nnoremap <F4> :NERDTreeToggle<cr>
