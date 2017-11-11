@@ -434,6 +434,8 @@ let s:windows_vk = {
 
 " launch conque
 function! conque_term#open(...) "{{{
+    " disable white space show
+    set nolist
     let command = get(a:000, 0, '')
     let vim_startup_commands = get(a:000, 1, [])
     let return_to_current  = get(a:000, 2, 0)
