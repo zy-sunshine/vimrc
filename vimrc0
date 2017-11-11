@@ -26,6 +26,8 @@ set fileformat=unix
 set ffs=unix
 set encoding=utf-8
 set fileencoding=utf-8
+" fallback encoding to gb18030
+set fileencodings=utf-8,gb18030
 "e ++ff=unix
 
 
