@@ -12,7 +12,7 @@ set nocompatible
 " Automatic reloading of .vimrc
 " Automatic updating vimrc
 if has("autocmd")
-    augroup augrou_default
+    augroup au_default
         autocmd!
         autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
     augroup END
@@ -32,7 +32,7 @@ set fileencodings=utf-8,gb18030
 
 
 " Put these in an autocmd group, so that we can delete them easily.
-augroup autocmd_gotoLastPosition
+augroup au_gotoLastPosition
     autocmd!
     " When editing a file, always jump to the last known cursor position.
     " Don't do it when the position is invalid or when inside an event handler
@@ -483,3 +483,33 @@ command! Todo :Grepper
       \ -noprompt
       \ -tool git
       \ -grepprg git grep -nIi '\(TODO\|FIXME\)'
+
+
+" ### asyncrun
+" git clone https://github.com/skywind3000/asyncrun.vim.git
+" %:p     - File name of current buffer with full path
+" %:t     - File name of current buffer without path
+" %:p:h   - File path of current buffer without file name
+" %:e     - File extension of current buffer
+" %:t:r   - File name of current buffer without path and extension
+" %       - File name relativize to current directory
+" %:h:.   - File path relativize to current directory
+" <cwd>   - Current directory
+" <cword> - Current word under cursor
+" <cfile> - Current file name under cursor
+" <root>  - Project root directory
+
+" run testcase
+nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
+
+" echo current root path
+"" :echo asyncrun#get_root('%')
+
+" ### python compiler
+autocmd FileType         python  source ~/.vim/compiler/python.vim
+
+" auto open quickfix when asyncrun start
+augroup au_asyncrun
+    autocmd!
+    autocmd User AsyncRunStart call asyncrun#quickfix_toggle(8, 1)
+augroup END
