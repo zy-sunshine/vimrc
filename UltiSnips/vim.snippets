@@ -1,0 +1,114 @@
+snippet append "Add item to array" b
+add(${1:${VISUAL:list}}, ${2:entry})
+endsnippet
+
+snippet ifvar "Only if variable exists and is greater than 0"
+if exists("g:${1:variable}") && g:$1 > 0${2}
+endsnippet
+
+snippet ifnovar "Only if variable doesn't exist or is equal to 0"
+if !exists("g:${1:variable}") || g:$1 == 0${2}
+endsnippet
+
+snippet ifnomaps "Guard to prevent this plugin's map definitions"
+if !exists("g:${1:`!p snip.rv = snip.basename`}_no_mappings") || !g:$1_no_mappings${2}
+endsnippet
+
+snippet ifnoexist "Define a variable if undefined"
+if !exists("${1:g}:${2:`!p snip.rv = snip.basename`}_${3:var}")
+	let $1:$2_$3 = ${4:value}
+endif${5}
+endsnippet
+
+snippet ifhasmapto "Define a plugin map if not already defined"
+if !hasmapto('<Plug>(${1:`!p snip.rv = snip.basename`}-${2:command})')
+	${3:n}map ${4:<buffer> }<${5:LocalLeader}>${6:lhs} $1$2
+endif${0}
+endsnippet
+
+snippet header "Vimscript header"
+" File: ${1:`!v expand('%:t')`}
+" Author: ${2:`!v g:snips_author`}
+" Description: ${3}
+endsnippet
+
+snippet ifload "Vimscript plugin load guard"
+if exists('${1:loaded_`!p snip.rv = snip.basename`}') || &cp${2: || version < 700}
+	finish
+endif
+let $1 = 1${3}
+endsnippet
+
+snippet !fun(ction)?! "New function" br
+function! ${1:`!v expand('%') =~ 'autoload' ? substitute(matchstr(expand('%:p'),'autoload/\zs.*\ze.vim'),'[/\\]','#','g').'#' : ''`}${2:function_name}(${3})
+	${4:" code}
+endf${5}
+endsnippet
+
+snippet try "try..catch..end"
+try
+	${1}
+catch ${2}
+	${3}
+endtry${4}
+endsnippet
+
+snippet for "for..end"
+for ${1:needle} in ${2:haystack}
+	${3:" code}
+endfor${4}
+endsnippet
+
+snippet while "while..end"
+while ${1:condition}
+	${2:" code}
+endw${3}
+endsnippet
+
+snippet augroup "Define an augroup"
+augroup ${1:AU_NAME}
+	" this one is which you're most likely to use?
+	autocmd ${2:BufRead,BufNewFile} ${3:*.ext,*.ext3|<buffer[=N]>} ${4}
+augroup end${5}
+endsnippet
+
+snippet compiler "Create a compiler script" b
+" Compiler setup for ${1:file_type}
+" For details on creating a compiler file, see ":help write-compiler-plugin".
+" Compiler:	$1
+" Maintainer:	${2:`!v g:snips_author`}
+" Last Change:	`!v strftime("%Y-%m-%d")`
+
+if exists("current_compiler")
+  " TODO: uncomment
+  "finish
+endif
+let current_compiler = "$1"
+
+if exists(":CompilerSet") != 2		" older Vim always used :setlocal
+  command -nargs=* CompilerSet setlocal <args>
+endif
+
+let s:cpo_save = &cpo
+set cpo-=C
+
+" TODO: update makeprg to the appropriate build tool/compiler
+"CompilerSet makeprg=make\ %
+
+" TODO: update the errorformat
+CompilerSet errorformat=$0
+            \%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,
+            \%Z\ \ \ \ %m
+
+let &cpo = s:cpo_save
+unlet s:cpo_save
+
+" TODO: Remove this block. It's for testing with Autosource.
+if &ft =~ 'vim'
+  cgetfile ~/${2:logfile.log}
+  copen
+endif
+
+" vim:set sw=2 sts=2:
+endsnippet
+

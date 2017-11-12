@@ -1,0 +1,197 @@
+priority 5
+#clearsnippets #!
+snippet #! "#!"
+#!/usr/bin/env python
+#encoding=utf8
+endsnippet
+
+snippet imp "import"
+import ${1:module}
+endsnippet
+
+snippet docs "module docstring"
+"""
+File: ${1:`!p snip.rv = snip.fn`}
+Author: ${2:`!v g:snips_author`}
+Description: ${3}
+"""
+endsnippet
+
+snippet append "Add item to array" b
+${1:${VISUAL:list}}.append(${2:entry})
+endsnippet
+
+snippet append "Merge array to array" b
+${1:${VISUAL:list}}.extend(${2:list})
+endsnippet
+
+snippet wh "while"
+while ${1:condition}:
+	${2:${VISUAL:# code...}}
+endsnippet
+
+snippet dowh "do..while equivalent"
+while True:
+	${1:${VISUAL:# code...}}
+	if ${2:condition}:
+		break
+endsnippet
+
+snippet with "with block"
+with ${1:expr} as ${2:var}:
+	${3:${VISUAL:# code...}}
+endsnippet
+
+# Don't use the UltiSnip version of def (which works great for sphinx or
+# doxygen, but I use neither).
+clearsnippets def
+
+snippet !fun|def! "function with docstrings" br
+def ${1:function}(`!p
+
+def get_args(arglist):
+    """Copied verbatim from UltiSnips/python.snippets"""
+    args = [arg.split('=')[0].strip() for arg in arglist.split(',') if arg]
+    args = [arg for arg in args if arg and arg != "self"]
+    return args
+
+if snip.indent:
+   snip.rv = 'self' + (", " if len(t[2]) else "")`${2:args}):
+	"""${3:@todo: Docstring for $1}
+
+    $1(${4:`!p
+args = get_args(t[2])
+
+arg_types = ""
+if args:
+   arg_types = "_type, ".join(args)
+   arg_types += "_type"
+
+snip.rv = arg_types
+`}) -> ${5:return_type}
+    """
+	${0:pass}
+endsnippet
+
+snippet deff "function - basic"
+def ${1:fname}(${2:`!v indent('.') ? 'self' : ''`}):
+	${3}
+endsnippet
+
+# Ifs
+snippet if "if"
+if ${1:condition}:
+	${2:${VISUAL:code...}}
+endsnippet
+
+snippet el "else"
+else:
+	${1:code...}
+endsnippet
+
+snippet ei "elif"
+elif ${1:condition}:
+	${2:code...}
+endsnippet
+
+# For
+snippet for "for"
+for ${1:needle} in ${2:haystack}:
+	${3:code...}
+endsnippet
+
+# Encodes
+snippet cutf8 "encoding: utf8"
+# -*- coding: utf-8 -*-
+endsnippet
+
+snippet clatin1 "encoding: latin1"
+# -*- coding: latin-1 -*-
+endsnippet
+
+snippet cascii "encoding: ascii"
+# -*- coding: ascii -*-
+endsnippet
+
+snippet ld "lambda"
+${1:var} = lambda ${2:vars} : ${3:action}
+endsnippet
+
+snippet . "."
+self.
+endsnippet
+
+snippet su "super"
+super(${1:Class}, self).${2:method}(${3})${4}
+endsnippet
+
+snippet cv "Initialize a private member variable (in ctor)" !b
+self._$1 = ${1:var}
+endsnippet
+
+# unit tests
+snippet unittest "Define unittests when executing module"
+if __name__ == '__main__':
+	import unittest
+	class ${1:ClassName}Test(unittest.TestCase):
+		def setUp(self):
+			${2:pass}
+		def runTest(self):
+			${3:pass}
+endsnippet
+
+snippet doctest "Run doctests when executing module"
+def _test():
+	import doctest
+	doctest.testmod()
+if __name__ == '__main__':
+	_test()
+endsnippet
+
+snippet _ "__magic__"
+__${1:init}__${2}
+endsnippet
+
+# Debugging
+clearsnippets pdb
+snippet pdb "python debugger (pdb)"
+import pdb; pdb.set_trace()
+endsnippet
+
+snippet ipdb "ipython debugger (ipdb)"
+import ipdb; ipdb.set_trace()
+endsnippet
+
+snippet pdbbb "pdb++ debugger (pdbpp)"
+import pdbpp; pdbpp.set_trace()
+endsnippet
+
+snippet pprint "pprint"
+import pprint; pprint.pprint(${1})${2}
+endsnippet
+
+# Limit quote as snippet to specific scenarios (first nonblank or
+# following equals) so it's not accidentially expanded within other
+# snippets.
+snippet " "multi-line string" b
+""" ${1:doc}
+"""
+endsnippet
+
+snippet '=\s*\"' "multi-line string" r
+= """ ${1:doc}
+"""
+endsnippet
+
+snippet fut "import from future"
+from __future__ import ${1}
+endsnippet
+
+snippet py3 "Import python3 compatibility for python27"
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+endsnippet
+
+
