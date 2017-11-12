@@ -1,0 +1,16 @@
+* asyncrun.vim 异步在后台运行命令，主要用来运行编译或程序，与其他几个插件一起配合使用。
+    * errormarker.vim 在 make 后针对输出消息格式化情况，对代码中相应行做颜色标注。
+    * compiler/python.vim 根据网上的代码，加入 python.vim 插件的整合修改，
+        可以 format python make(运行) 的输出。
+
+* ctrlp.vim 匹配文件路径，当前目录或者 buffers。
+* jedi-vim 实时 Python 模块解析，代码提示，代码声明跳转，引用查询。
+* OmniCppComplete 根据 ctags 生成的 tags 文件对 cpp 做代码提示。
+* taglist_45 根据 tags 显示当前 buffer 的 outline。
+* vim-grepper 对 grep, ag, git grep 等命令的良好 Command 封装。
+* zencoding-vim 一些 html 的 abbreviation。
+* conque ConqueTerm bash 可以在 vim 中使用 bash 命令行。
+* nerdtree 文件管理器，可以在文件浏览器中 Reveal 文件，可以增删改文件、文件夹。
+* syntastic 代码语法检查器 pyflake8 pylint 等，可以提示错误，跳转错误位置。
+* vim-autotag 在保存文件时可以对当前修改的文件调用 ctags 做增量生成。
+* vim-powerline 彩色的 statusline。
