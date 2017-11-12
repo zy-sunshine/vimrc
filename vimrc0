@@ -72,16 +72,17 @@ noremap <Leader>E :qa!<CR>   " Quit all windows
 nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
 
 " easier moving between tabs and buffers
-execute "set <M-k>=\ek"
-execute "set <M-j>=\ej"
-execute "set <M-h>=\eh"
-execute "set <M-l>=\el"
-nnoremap <M-k> <esc>:bprevious<CR>
-nnoremap <M-j> <esc>:bnext<CR>
-nnoremap <M-h> <esc>:tabprevious<CR>
-nnoremap <M-l> <esc>:tabnext<CR>
-nnoremap <C-t> <esc>:tabnew<CR>
-nnoremap <C-e> <esc>:tabclose<CR>
+nnoremap <C-n> <esc>:bnext<CR>
+nnoremap <C-p> <esc>:bprevious<CR>
+
+execute "set <M-n>=\en"
+execute "set <M-p>=\ep"
+execute "set <M-t>=\et"
+execute "set <M-e>=\ee"
+nnoremap <M-n> <esc>:tabnext<CR>
+nnoremap <M-p> <esc>:tabprevious<CR>
+nnoremap <M-t> <esc>:tabnew<CR>
+nnoremap <M-e> <esc>:tabclose<CR>
 
 " map sort function to a key
 "" vnoremap <Leader>s :sort<CR>
@@ -208,8 +209,7 @@ nnoremap <C-q> :q<cr>
 inoremap <C-b> <Left>
 inoremap <C-f> <Right>
 inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
+inoremap <C-k> <C-o>d$
 inoremap <C-d> <Del>
 inoremap <C-e> <End>
 inoremap <C-a> <Home>
@@ -283,8 +283,9 @@ let g:ctrlp_prompt_mappings = {
     \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
     \ }
 let g:ctrlp_working_path_mode = 0
-nnoremap <C-p> :CtrlPCurWD<cr>
-nnoremap <C-b> :CtrlPBuffer<cr>
+nnoremap <Leader>b :CtrlPBuffer<cr>
+let g:ctrlp_map = '<Leader>p'
+let g:ctrlp_cmd = 'CtrlPCurWD'
 
 " Settings for python-mode
 " Note: I'm no longer using this. Leave this commented out
@@ -311,7 +312,7 @@ nnoremap <C-b> :CtrlPBuffer<cr>
 " Settings for jedi-vim
 " cd ~/.vim/bundle
 " git clone git://github.com/davidhalter/jedi-vim.git
-let g:jedi#completions_command = "<C-M>"
+let g:jedi#completions_command = "<C-j>"
 "" let g:jedi#usages_command = "<leader>z"
 "" let g:jedi#popup_on_dot = 0
 "" let g:jedi#popup_select_first = 0
@@ -322,20 +323,20 @@ let g:virtualenv_auto_activate = 1
 
 " Better navigating through omnicomplete option list
 " See http://stackoverflow.com/questions/2170023/how-to-map-keys-for-popup-menu-in-vim
-"" set completeopt=longest,menuone
-"" function! OmniPopup(action)
-""     if pumvisible()
-""         if a:action == 'j'
-""             return "\<C-N>"
-""         elseif a:action == 'k'
-""             return "\<C-P>"
-""         endif
-""     endif
-""     return a:action
-"" endfunction
+set completeopt=longest,menuone
+function! OmniPopup(action)
+    if pumvisible()
+        if a:action == 'j'
+            return "\<C-N>"
+        elseif a:action == 'k'
+            return "\<C-P>"
+        endif
+    endif
+    return a:action
+endfunction
 
-"" inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
-"" inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
+inoremap <silent><C-j> <C-R>=OmniPopup('j')<CR>
+inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
 
 
 " Python folding
@@ -379,9 +380,9 @@ let g:autotagTagsArgs = '--c++-kinds=+p --fields=+iaS --extra=+q'
 "let g:autotagVerbosityLevel = 10 " DEBUG
 
 " ### syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
@@ -439,11 +440,46 @@ nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'
 nmap <silent> sp    <Plug>LocationPrevious
 nmap <silent> sn    <Plug>LocationNext
 
-" ### grep
-set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
-
 " ### NerdTree
-nnoremap U <c-r>
-nnoremap <c-r> :NERDTreeFind<cr>
+nnoremap <Leader>r :NERDTreeFind<cr>
 nnoremap <F4> :NERDTreeToggle<cr>
 let NERDTreeQuitOnOpen = 1
+
+" ### find in files, and grep, using plugin grepper
+set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+" for browsing the input history
+cnoremap <c-n> <down>
+cnoremap <c-p> <up>
+
+"autocmd FileType GrepperSide
+"  \  silent execute 'keeppatterns v#'.b:grepper_side.'#>'
+"  \| silent normal! ggn
+
+" <Leader>f for search in buffers
+
+nnoremap ff :Grepper -buffers -highlight -jump -prompt -cword <cr>--
+nnoremap fs :Grepper -buffers -highlight -jump -prompt -cword -side <cr>--
+xnoremap ff :Grepper -buffers -highlight -jump -prompt -cword <cr>--
+xnoremap fs :Grepper -buffers -highlight -jump -prompt -cword -side <cr>--
+nmap fo  <plug>(GrepperOperator)
+xmap fo  <plug>(GrepperOperator)
+
+" <Leader>F for search in files in current directory
+nnoremap FF :Grepper -dir pwd -highlight -jump -prompt -cword <cr>--
+nnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
+xnoremap FF :Grepper -dir pwd -highlight -jump -prompt -cword <cr>--
+xnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
+
+nnoremap fg :Grepper -tool git<cr>
+nnoremap fa :Grepper -tool ag<cr>
+
+let g:grepper           = {}
+let g:grepper.tools     = ['grep', 'git', 'ag']
+let g:grepper.open      = 1
+let g:grepper.jump      = 0
+"let g:grepper.next_tool = '<leader>f'  " default is <TAB>
+
+command! Todo :Grepper
+      \ -noprompt
+      \ -tool git
+      \ -grepprg git grep -nIi '\(TODO\|FIXME\)'
