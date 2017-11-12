@@ -64,13 +64,6 @@ endif
 let mapleader=","
 let maplocalleader=","
 
-" Quick quit command
-noremap <Leader>e :quit<CR>  " Quit current window
-noremap <Leader>E :qa!<CR>   " Quit all windows
-
-" Shortcut to open vimrc
-nnoremap <Leader>ev :vsplit ~/.vim/vimrc0<cr>
-
 " easier moving between tabs and buffers
 nnoremap <C-n> <esc>:bnext<CR>
 nnoremap <C-p> <esc>:bprevious<CR>
@@ -350,6 +343,8 @@ set nofoldenable
 
 " Shortcut to open vimrc
 nnoremap <Leader>ev :split ~/.vim/vimrc0<cr>
+nnoremap <Leader>ep :split ~/.vim/UltiSnips/python.snippets<cr>
+nnoremap <Leader>eo :split ~/.vim/bundle/vim-snippets/UltiSnips/python.snippets<cr>
 
 " ### add " ' wrap functions
 nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
@@ -508,10 +503,25 @@ nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
 "" :echo asyncrun#get_root('%')
 
 " ### python compiler
-autocmd FileType         python  source ~/.vim/compiler/python.vim
+augroup au_python
+    autocmd!
+    autocmd FileType python source ~/.vim/compiler/python.vim
+augroup END
 
 " auto open quickfix when asyncrun start
 augroup au_asyncrun
     autocmd!
     autocmd User AsyncRunStart call asyncrun#quickfix_toggle(8, 1)
 augroup END
+
+" Snippets -- Simplify commands. I rarely Expand. Instead I usually list and
+" then complete.
+let g:UltiSnipsExpandTrigger       = '<C-t><C-t>'
+let g:UltiSnipsListSnippets        = '<C-t><C-l>'
+let g:UltiSnipsJumpForwardTrigger  = '<C-t><C-n>'
+let g:UltiSnipsJumpBackwardTrigger = '<C-t><C-p>'
+let g:ultisnips_python_style = 'doxygen'
+let g:UltiSnipsEditSplit="vertical"
+let g:ultisnips_python_triple_quoting_style='single'
+
+let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
