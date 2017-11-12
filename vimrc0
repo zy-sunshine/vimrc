@@ -365,9 +365,9 @@ nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 " taglist_45
 " 函数和变量列表
-nnoremap <F3> :TlistToggle<CR>
+"nnoremap <F3> :TlistToggle<CR>
 " 更新函数变量表 间隔时间 for tag list
-set updatetime=100
+"set updatetime=100
 
 " ### vim-autotags
 let g:autotagTagsFile = 'tags'
@@ -495,10 +495,8 @@ command! Todo :Grepper
 " <cword> - Current word under cursor
 " <cfile> - Current file name under cursor
 " <root>  - Project root directory
-
 " run testcase
 nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
-
 " echo current root path
 "" :echo asyncrun#get_root('%')
 
@@ -507,7 +505,6 @@ augroup au_python
     autocmd!
     autocmd FileType python source ~/.vim/compiler/python.vim
 augroup END
-
 " auto open quickfix when asyncrun start
 augroup au_asyncrun
     autocmd!
@@ -516,6 +513,8 @@ augroup END
 
 " Snippets -- Simplify commands. I rarely Expand. Instead I usually list and
 " then complete.
+" git clone https://github.com/honza/vim-snippets.git
+" git clone https://github.com/SirVer/ultisnips.git
 let g:UltiSnipsExpandTrigger       = '<C-t><C-t>'
 let g:UltiSnipsListSnippets        = '<C-t><C-l>'
 let g:UltiSnipsJumpForwardTrigger  = '<C-t><C-n>'
@@ -525,3 +524,12 @@ let g:UltiSnipsEditSplit="vertical"
 let g:ultisnips_python_triple_quoting_style='single'
 
 let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
+
+" conqueTerm
+"let g:ConqueTerm_EscKey = '<C-k>'
+let g:ConqueTerm_CloseOnEnd = 1
+" open bash in current directory
+nnoremap <F3> :ConqueTermSplit ipython<CR>
+nnoremap <F4> :ConqueTermSplit bash<CR>
+" open bash in file directory
+" oepn ipython in current directory
