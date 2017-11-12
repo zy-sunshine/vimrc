@@ -283,8 +283,8 @@ let g:ctrlp_prompt_mappings = {
     \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
     \ }
 let g:ctrlp_working_path_mode = 0
-nnoremap <Leader>b :CtrlPBuffer<cr>
-let g:ctrlp_map = '<Leader>p'
+nnoremap fb :CtrlPBuffer<cr>
+let g:ctrlp_map = 'fp'
 let g:ctrlp_cmd = 'CtrlPCurWD'
 
 " Settings for python-mode
@@ -313,7 +313,9 @@ let g:ctrlp_cmd = 'CtrlPCurWD'
 " cd ~/.vim/bundle
 " git clone git://github.com/davidhalter/jedi-vim.git
 let g:jedi#completions_command = "<C-j>"
-"" let g:jedi#usages_command = "<leader>z"
+let g:jedi#usages_command = "fu"
+let g:jedi#goto_definitions_command = "gd"
+let g:jedi#goto_assignments_command = "gs"
 "" let g:jedi#popup_on_dot = 0
 "" let g:jedi#popup_select_first = 0
 "" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
@@ -441,9 +443,9 @@ nmap <silent> sp    <Plug>LocationPrevious
 nmap <silent> sn    <Plug>LocationNext
 
 " ### NerdTree
-nnoremap <Leader>r :NERDTreeFind<cr>
+nnoremap fr :NERDTreeFind<cr>
 nnoremap <F4> :NERDTreeToggle<cr>
-let NERDTreeQuitOnOpen = 1
+"let NERDTreeQuitOnOpen = 1
 
 " ### find in files, and grep, using plugin grepper
 set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
