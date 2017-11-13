@@ -263,7 +263,7 @@ let g:ctrlp_max_height = 30
 "" set wildignore+=*.pyc
 "" set wildignore+=*_build/*
 "" set wildignore+=*/coverage/*
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
