@@ -276,7 +276,9 @@ let g:ctrlp_prompt_mappings = {
     \ 'PrtHistory(1)':        ['<up>', '<c-k>'],
     \ }
 let g:ctrlp_working_path_mode = 0
+let g:ctrlp_extensions = ['tag']
 nnoremap fb :CtrlPBuffer<cr>
+nnoremap ft :CtrlPTag<cr>
 let g:ctrlp_map = 'fp'
 let g:ctrlp_cmd = 'CtrlPCurWD'
 
@@ -362,6 +364,7 @@ inoremap kj <esc>
 
 " omnicppcomplete
 nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+    \:UMiniBufExplorer<CR>
 
 " taglist_45
 " 函数和变量列表
@@ -440,7 +443,7 @@ nmap <silent> sn    <Plug>LocationNext
 " ### NerdTree
 nnoremap fr :NERDTreeFind<cr>
 nnoremap <F4> :NERDTreeToggle<cr>
-"let NERDTreeQuitOnOpen = 1
+let NERDTreeQuitOnOpen = 0
 
 " ### find in files, and grep, using plugin grepper
 set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
@@ -497,6 +500,7 @@ command! Todo :Grepper
 " <root>  - Project root directory
 " run testcase
 nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
+nnoremap rp :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
 " echo current root path
 "" :echo asyncrun#get_root('%')
 
@@ -504,6 +508,7 @@ nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
 augroup au_python
     autocmd!
     autocmd FileType python source ~/.vim/compiler/python.vim
+    autocmd FileType python source ~/.vim/compiler/py_compile.vim
 augroup END
 " auto open quickfix when asyncrun start
 augroup au_asyncrun
@@ -529,7 +534,9 @@ let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
 "let g:ConqueTerm_EscKey = '<C-k>'
 let g:ConqueTerm_CloseOnEnd = 1
 " open bash in current directory
-nnoremap <F3> :ConqueTermSplit ipython<CR>
-nnoremap <F4> :ConqueTermSplit bash<CR>
+nnoremap <F3> :ConqueTermSplit bash<CR>
 " open bash in file directory
 " oepn ipython in current directory
+
+" ### minibufexpl
+map <Leader>b :TMiniBufExplorer<CR>
