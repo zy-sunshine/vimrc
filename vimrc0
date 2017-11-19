@@ -49,7 +49,17 @@ augroup END
 
 "set pastetoggle=<F12>
 set clipboard=unnamed
-
+" use xclip to copy paste
+" sudo aptitude install xclip
+function! Func2X11()
+    :call system('xclip -selection c', @r)
+endfunction
+vnoremap yx "ry:call Func2X11()<cr>
+"vnoremap yx :!xclip -f -sel clip<CR>
+" paste on previous line
+noremap yP :-1r !xclip -o -sel clip<CR>
+" paste on next line
+noremap yp :r !xclip -o -sel clip<CR>
 
 " Mouse and backspace
 "" set mouse=a  " on OSX press ALT and click
