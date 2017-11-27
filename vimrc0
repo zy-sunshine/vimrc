@@ -48,7 +48,7 @@ augroup END
 " paste. At the bottom you should see ``-- INSERT (paste) --``.
 
 "set pastetoggle=<F12>
-set clipboard=unnamed
+"set clipboard=unnamed
 " use xclip to copy paste
 " sudo aptitude install xclip
 function! Func2X11()
@@ -509,8 +509,13 @@ command! Todo :Grepper
 " <cfile> - Current file name under cursor
 " <root>  - Project root directory
 " run testcase
-nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
-nnoremap rp :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
+augroup au_python_run
+    autocmd!
+    autocmd FileType python nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
+    autocmd FileType python nnoremap rf :AsyncRun -auto=make python %:p
+    autocmd FileType python nnoremap rb :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
+augroup END
+
 " echo current root path
 "" :echo asyncrun#get_root('%')
 
