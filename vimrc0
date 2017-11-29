@@ -67,6 +67,7 @@ noremap yp :r !xclip -o -sel clip<CR>
 if has('mouse')
     set mouse=a
 endif
+set backspace=indent,eol,start
 
 " Rebind <Leader> key
 " I like to have it here becuase it is easier to reach than the default and
