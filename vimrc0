@@ -583,3 +583,6 @@ augroup END
 " ### errormarker
 " do not show error red background
 let g:errormarker_errorgroup=""
+
+"w!! writes the file using sudo
+cmap w!! w !sudo tee % >/dev/null
