@@ -153,7 +153,6 @@ __${1:init}__${2}
 endsnippet
 
 # Debugging
-clearsnippets pdb
 snippet pdb "python debugger (pdb)"
 import pdb; pdb.set_trace()
 endsnippet
@@ -194,4 +193,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 endsnippet
 
+snippet ipath "import path"
+from os.path import join as pathjoin, exists as pathexists
+endsnippet
 
+snippet ijson "import json"
+from json import loads as jloads, dumps as jdumps
+endsnippet

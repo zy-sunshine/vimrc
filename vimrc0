@@ -266,9 +266,6 @@ endfunction
 " =====================================================
 " abbreviation
 " =====================================================
-" add ipdb
-iabbrev ipdb import ipdb; ipdb.set_trace()
-iabbrev ipath from os.path import join as pathjoin, exists as pathexists
 " email
 iabbrev @@    zy.netsec@gmail.com
 " copyright
@@ -582,3 +579,7 @@ augroup filetype_vim
     autocmd FileType vim setlocal foldmethod=marker
 augroup END
 " }}}
+
+" ### errormarker
+" do not show error red background
+let g:errormarker_errorgroup=""
