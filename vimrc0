@@ -555,3 +555,7 @@ nnoremap <F3> :ConqueTermSplit bash<CR>
 
 " ### minibufexpl
 map <Leader>b :TMiniBufExplorer<CR>
+
+" ### git plugin vim-fugitive
+" git clone https://github.com/tpope/vim-fugitive.git
+
