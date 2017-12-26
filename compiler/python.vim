@@ -33,20 +33,26 @@ CompilerSet makeprg=python\ -t\ %
 "      \%-G*%\\{70%\\},
 "      \%-G%*\\d\ items\ had\ failures:,
 "      \%-G%*\\s%*\\d\ of%*\\s%*\\d\ in%.%#
+"
+" 比较简单直观的 format，不是多行匹配，更方便查看错误问题以及行号
+CompilerSet errorformat=
+    \%E\ \ File\ \"%f\"\\\,\ line\ %l\\\,%m,
+    \%E\ \ File\ \"%f\"\\\,\ line\ %l,
+    \%+G%.%#
 
 " ### from http://www.vim.org/scripts/script.php?script_id=1439
 " 类似状态机，多行匹配会使用所有 pattern 对每一行输出做匹配，
 " 一旦进入 message start, 其他 %C %Z 标签才会起作用。
 " 因此最后一行是在没有消息匹配状态的时候是否输出当前行,这里选择输出。
-CompilerSet errorformat=
-    \%A\ \ File\ \"%f\"\\\,\ line\ %l\\\,%m,
-    \%+C\ \ \ \ %.%#,
-    \%+Z%.%#Error\:\ %.%#,
-    \%A\ \ File\ \"%f\"\\\,\ line\ %l,
-    \%+C\ \ %.%#,
-    \%+C%p^,
-    \%Z%m,
-    \%+G%.%#
+"CompilerSet errorformat=
+"    \%A\ \ File\ \"%f\"\\\,\ line\ %l\\\,%m,
+"    \%+C\ \ \ \ %.%#,
+"    \%+Z%.%#Error\:\ %.%#,
+"    \%A\ \ File\ \"%f\"\\\,\ line\ %l,
+"    \%+C\ \ %.%#,
+"    \%+C%p^,
+"    \%Z%m,
+"    \%+G%.%#
 
 " 上面的 errorformat 是根据这个源代码修改
 "CompilerSet errorformat=

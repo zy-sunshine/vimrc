@@ -61,12 +61,29 @@ noremap yP :-1r !xclip -o -sel clip<CR>
 " paste on next line
 noremap yp :r !xclip -o -sel clip<CR>
 
+" Convert slashes to backslashes for Windows.
+if has('win32')
+  nnoremap yf :let @"=substitute(expand("%:p"), "/", "\\", "g")<CR>
+  nnoremap yr :let @"=substitute(expand("%:p:."), "/", "\\", "g")<CR>
+  nnoremap yn :let @"=substitute(expand("%:t"), "/", "\\", "g")<CR>
+  nnoremap ym :let @"=substitute(expand("%:p:."), "/", ".", "g")<CR>
+
+  " This will copy the path in 8.3 short format, for DOS and Windows 9x
+  "nmap yn :let @*=substitute(expand("%:p:8"), "/", "\\", "g")<CR>
+else
+  nnoremap yf :let @"=expand("%:p")<CR>
+  nnoremap yr :let @"=expand("%:p:.")<CR>
+  nnoremap yn :let @"=expand("%:t")<CR>
+  nnoremap ym :let @"=substitute(expand("%:p:."), "/", ".", "g")<CR>
+endif
+
 " Mouse and backspace
 "" set mouse=a  " on OSX press ALT and click
 "" set bs=2     " make backspace behave like normal again
 if has('mouse')
     set mouse=a
 endif
+set backspace=indent,eol,start
 
 " Rebind <Leader> key
 " I like to have it here becuase it is easier to reach than the default and
@@ -77,6 +94,7 @@ let maplocalleader=","
 " easier moving between tabs and buffers
 nnoremap <C-n> <esc>:bnext<CR>
 nnoremap <C-p> <esc>:bprevious<CR>
+nnoremap 1 <esc>:bfirst<CR>
 
 execute "set <M-n>=\en"
 execute "set <M-p>=\ep"
@@ -195,7 +213,7 @@ call pathogen#helptags()
 " Quicksave command
 noremap <C-s> :update<CR>
 vnoremap <C-s> <C-C>:update<CR>
-inoremap <C-s> <C-O>:update<CR>
+inoremap <C-s> <esc>:update<CR>a
 " 确认退出
 set confirm
 
@@ -248,8 +266,6 @@ endfunction
 " =====================================================
 " abbreviation
 " =====================================================
-" add ipdb
-iabbrev ipdb import ipdb; ipdb.set_trace()
 " email
 iabbrev @@    zy.netsec@gmail.com
 " copyright
@@ -512,6 +528,7 @@ command! Todo :Grepper
 augroup au_python_run
     autocmd!
     autocmd FileType python nnoremap rt :AsyncRun -auto=make python runtc.py %:t:r
+    autocmd FileType python nnoremap rc :AsyncRun -auto=make runcmd.sh %:t:r
     autocmd FileType python nnoremap rf :AsyncRun -auto=make python %:p
     autocmd FileType python nnoremap rb :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
 augroup END
@@ -556,6 +573,19 @@ nnoremap <F3> :ConqueTermSplit bash<CR>
 " ### minibufexpl
 map <Leader>b :TMiniBufExplorer<CR>
 
+" Vimscript file settings ---------------------- {{{
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" ### errormarker
+" do not show error red background
+let g:errormarker_errorgroup=""
+
+"w!! writes the file using sudo
+cmap w!! w !sudo tee % >/dev/null
+
 " ### git plugin vim-fugitive
 " git clone https://github.com/tpope/vim-fugitive.git
-
