@@ -431,6 +431,10 @@ let g:syntastic_python_pylint_post_args =
     \      'attribute-defined-outside-init' ]
 " no-name-in-module
 
+" syntastic cpp options
+"let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = "-std=c++11 -Wall -Wextra -Wpedantic"
+
 function! ToggleQuickFix()
   if exists("g:qwindow")
     lclose
@@ -533,6 +537,11 @@ augroup au_python_run
     autocmd FileType python nnoremap rb :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
 augroup END
 
+augroup au_build_run
+    autocmd!
+    autocmd FileType cpp nnoremap rs :AsyncRun -auto=make scons
+augroup END
+
 " echo current root path
 "" :echo asyncrun#get_root('%')
 
@@ -583,3 +592,8 @@ augroup END
 " ### errormarker
 " do not show error red background
 let g:errormarker_errorgroup=""
+
+" ### localvimrc
+" git clone https://github.com/embear/vim-localvimrc.git localvimrc
+let g:localvimrc_sandbox='0'
+let g:localvimrc_ask='0'
