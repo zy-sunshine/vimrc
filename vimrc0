@@ -421,6 +421,7 @@ let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_python_flake8_post_args =
     \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261,E305',
     \   '--max-line-length=120',
+    \   '--max-complexity=12',
     \   '--builtins=_' ]
 let g:syntastic_python_pylint_post_args =
     \ [ '--module-rgx=[a-zA-Z_][a-zA-Z0-9_]*$',
