@@ -189,6 +189,8 @@ set ignorecase
 "" set nowritebackup
 "" set noswapfile
 
+"w!! writes the file using sudo
+cmap w!! w !sudo tee % >/dev/null
 
 " Setup Pathogen to manage your plugins
 " mkdir -p ~/.vim/autoload ~/.vim/bundle
@@ -592,6 +594,9 @@ augroup END
 " ### errormarker
 " do not show error red background
 let g:errormarker_errorgroup=""
+
+" ### git plugin vim-fugitive
+" git clone https://github.com/tpope/vim-fugitive.git
 
 " ### localvimrc
 " git clone https://github.com/embear/vim-localvimrc.git localvimrc
