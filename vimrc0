@@ -538,6 +538,7 @@ augroup au_python_run
     autocmd FileType python nnoremap rc :AsyncRun -auto=make runcmd.sh %:t:r
     autocmd FileType python nnoremap rf :AsyncRun -auto=make python %:p
     autocmd FileType python nnoremap rb :AsyncRun -auto=make python -c "import py_compile,sys; sys.stderr=sys.stdout; py_compile.compile(r'%:p')"
+    autocmd BufNewFile,BufRead SCons* set filetype=scons
 augroup END
 
 augroup au_build_run
