@@ -603,3 +603,7 @@ let g:errormarker_errorgroup=""
 " git clone https://github.com/embear/vim-localvimrc.git localvimrc
 let g:localvimrc_sandbox='0'
 let g:localvimrc_ask='0'
+
+" ### cppman
+" sudo aptitude install cppman
+autocmd FileType cpp set keywordprg=cppman
