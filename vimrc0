@@ -14,7 +14,7 @@ set nocompatible
 if has("autocmd")
     augroup au_default
         autocmd!
-        autocmd BufWritePost .vimrc,vimrc0 source $MYVIMRC
+        autocmd BufWritePost .vimrc,vimrc0,.lvimrc source $MYVIMRC
     augroup END
 endif
 
@@ -391,8 +391,32 @@ inoremap kj <esc>
 
 
 " omnicppcomplete
-nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
+" for qt5 ctags generate
+"ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f qt5 /usr/include/x86_64-linux-gnu/qt5/
+
+" ### clang_complete should compatlible with comnicppcomplete
+" git clone https://github.com/Rip-Rip/clang_complete.git
+" project can put .clang_complete file in project's root, and add -DDEBUG -Isrcs/
+" aptitude remove libclang-5.0-dev libclang1-5.0
+" path to directory where library can be found
+"let g:clang_library_path='/usr/lib/llvm-3.6/lib'
+" or path directly to the library file
+let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
+"let g:clang_omnicppcomplete_compliance=1
+"let g:clang_make_default_keymappings=0
+let g:clang_complete_macros=1
+let g:clang_complete_patterns=1
+let g:clang_jumpto_declaration_key='gd'
+let g:clang_complete_copen=1
+let g:clang_hl_errors=1
+" make it in save and open buffer
+"let g:clang_periodic_quickfix=1
+augroup clang_complete
+    autocmd FileType cpp nnoremap <Leader>c :call g:ClangUpdateQuickFix()<CR>
+    autocmd BufWritePost *.cpp,*.h :call g:ClangUpdateQuickFix()<CR>
+augroup END
 
 " taglist_45
 " 函数和变量列表
@@ -404,7 +428,7 @@ nnoremap <F5> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 let g:autotagTagsFile = 'tags'
 let g:autotagmaxTagsFileSize = 104857600  " 100MB
 " custom tags args, adapt with omnicppcomplete
-let g:autotagTagsArgs = '--c++-kinds=+p --fields=+iaS --extra=+q'
+let g:autotagTagsArgs = '--sort=yes --c++-kinds=+p --fields=+iaS --extra=+q'
 "let g:autotagVerbosityLevel = 10 " DEBUG
 
 " ### syntastic
@@ -607,4 +631,7 @@ let g:localvimrc_ask='0'
 
 " ### cppman
 " sudo aptitude install cppman
-autocmd FileType cpp set keywordprg=cppman
+"autocmd FileType cpp set keywordprg=cppman
+augroup cppman
+    autocmd FileType cpp nnoremap <silent><buffer> L <Esc>:!cppman <cword><CR>
+augroup END
