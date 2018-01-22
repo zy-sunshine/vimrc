@@ -409,13 +409,13 @@ let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
 let g:clang_complete_macros=1
 let g:clang_complete_patterns=1
 let g:clang_jumpto_declaration_key='gd'
-let g:clang_complete_copen=1
+"let g:clang_complete_copen=1
 let g:clang_hl_errors=1
 " make it in save and open buffer
 "let g:clang_periodic_quickfix=1
 augroup clang_complete
     autocmd FileType cpp nnoremap <Leader>c :call g:ClangUpdateQuickFix()<CR>
-    autocmd BufWritePost *.cpp,*.h :call g:ClangUpdateQuickFix()<CR>
+    "autocmd BufWritePost *.cpp,*.h :call g:ClangUpdateQuickFix()<CR>
 augroup END
 
 " taglist_45
