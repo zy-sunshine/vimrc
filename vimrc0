@@ -501,6 +501,7 @@ nmap <silent> sn    <Plug>LocationNext
 nnoremap fr :NERDTreeFind<cr>
 nnoremap <F4> :NERDTreeToggle<cr>
 let NERDTreeQuitOnOpen = 0
+let NERDTreeIgnore = ['\.pyc$']
 
 " ### find in files, and grep, using plugin grepper
 set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
