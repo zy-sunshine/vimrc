@@ -1,3 +1,5 @@
+PS1='\u@\h:\w\$ '
+
 export PATH=~/bin:~/root/usr/bin:$PATH
 
 [[ -s "/home/netsec/.gvm/scripts/gvm" ]] && source "/home/netsec/.gvm/scripts/gvm"
