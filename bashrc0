@@ -1,0 +1,15 @@
+export PATH=~/bin:~/root/usr/bin:$PATH
+
+[[ -s "/home/netsec/.gvm/scripts/gvm" ]] && source "/home/netsec/.gvm/scripts/gvm"
+#source ~/venv3/bin/activate
+
+stty stop ''
+stty start ''
+stty -ixon
+stty -ixoff
+
+alias gs='git status'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias ga='git add'
+alias gc='git commit'
