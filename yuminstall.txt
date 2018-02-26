@@ -1,1 +1,1 @@
-dnf install clang-devel llvm
+dnf install clang-devel llvm ctags
