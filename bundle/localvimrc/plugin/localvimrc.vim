@@ -182,6 +182,28 @@ endif
 
 " Section: Functions {{{1
 
+" Redefine uniq() for compatibility with older Vim versions (< 7.4.218)
+function! s:uniq(list)
+        if exists('*uniq')
+                return uniq(a:list)
+        elseif len(a:list) <= 1
+                return a:list
+        endif
+
+        let last_element = get(a:list,0)
+        let uniq_list = [last_element]
+
+        for i in range(1, len(a:list)-1)
+                let next_element = get(a:list, i)
+                if last_element == next_element
+                        continue
+                endif
+                let last_element = next_element
+                call add(uniq_list, next_element)
+        endfor
+        return uniq_list
+endfunction
+
 " Function: s:LocalVimRC() {{{2
 "
 " search all local vimrc files from current directory up to root directory and
@@ -549,7 +571,7 @@ function! s:LocalVimRC()
   if exists("b:localvimrc_sourced_files")
     call extend(l:sourced_files, b:localvimrc_sourced_files)
   endif
-  call uniq(sort(l:sourced_files))
+  call s:uniq(sort(l:sourced_files))
   let b:localvimrc_sourced_files = l:sourced_files
 
   " make information persistent
