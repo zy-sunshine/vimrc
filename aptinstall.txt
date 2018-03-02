@@ -1,3 +1,4 @@
 #pylint
 flake8
 exuberant-ctags
+libclang-3.6-dev
