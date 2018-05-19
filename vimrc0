@@ -529,7 +529,7 @@ xnoremap FF :Grepper -dir pwd -highlight -jump -prompt -cword <cr>--
 xnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
 
 nnoremap fg :Grepper -tool git<cr>
-nnoremap fa :Grepper -tool ag<cr>
+nnoremap fa :Grepper -tool grep<cr>
 
 let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
