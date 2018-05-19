@@ -481,7 +481,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap <script> <silent> <F2> :call ToggleQuickFix()<CR>
+nmap <script> <silent> <F3> :call ToggleQuickFix()<CR>
 function! <SID>LocationPrevious()
   try
     lprev
@@ -503,7 +503,7 @@ nmap <silent> sn    <Plug>LocationNext
 
 " ### NerdTree
 nnoremap fr :NERDTreeFind<cr>
-nnoremap <F4> :NERDTreeToggle<cr>
+nnoremap <F3> :NERDTreeToggle<cr>
 let NERDTreeQuitOnOpen = 0
 let NERDTreeIgnore = ['\.pyc$']
 
@@ -608,7 +608,7 @@ let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
 "let g:ConqueTerm_EscKey = '<C-k>'
 let g:ConqueTerm_CloseOnEnd = 1
 " open bash in current directory
-nnoremap <F3> :ConqueTermSplit bash<CR>
+"nnoremap <F3> :ConqueTermSplit bash<CR>
 " open bash in file directory
 " oepn ipython in current directory
 
@@ -652,3 +652,10 @@ function! XTermPasteBegin()
   set paste
   return ""
 endfunction
+set pastetoggle=<F2>
+
+" ### line indent for vue js space 2
+augroup lineindent
+    autocmd FileType vue setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType js setlocal shiftwidth=2 tabstop=2 softtabstop=2
+augroup END
