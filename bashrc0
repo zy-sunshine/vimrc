@@ -1,4 +1,6 @@
-export PATH=~/bin:~/root/usr/bin:$PATH
+PS1='\u@\h:\w\$ '
+
+export PATH=~/.vim/bin:~/bin:~/root/usr/bin:$PATH
 
 [[ -s "/home/netsec/.gvm/scripts/gvm" ]] && source "/home/netsec/.gvm/scripts/gvm"
 #source ~/venv3/bin/activate
@@ -13,3 +15,7 @@ alias gd='git diff'
 alias gdc='git diff --cached'
 alias ga='git add'
 alias gc='git commit'
+
+alias l='ls'
+alias ll='ls -l'
+alias la='ls -la'
