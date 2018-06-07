@@ -293,7 +293,7 @@ let g:ctrlp_max_height = 30
 "" set wildignore+=*/coverage/*
 "let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'dir':  '\v([\/]\.(git|hg|svn)|node_modules)$',
   \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
@@ -391,7 +391,7 @@ inoremap kj <esc>
 
 
 " omnicppcomplete
-nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
 " for qt5 ctags generate
 "ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f qt5 /usr/include/x86_64-linux-gnu/qt5/
@@ -508,7 +508,7 @@ let NERDTreeQuitOnOpen = 0
 let NERDTreeIgnore = ['\.pyc$']
 
 " ### find in files, and grep, using plugin grepper
-set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out\ --exclude=node_modules\ --exclude=dist
 " for browsing the input history
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
@@ -665,3 +665,7 @@ augroup END
 let g:user_zen_settings = {
 \  'indentation' : '  '
 \}
+
+augroup encodingutf8
+    autocmd BufReadPost * FencManualEncoding utf-8
+augroup END
