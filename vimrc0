@@ -293,7 +293,7 @@ let g:ctrlp_max_height = 30
 "" set wildignore+=*/coverage/*
 "let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'dir':  '\v([\/]\.(git|hg|svn)|node_modules)$',
   \ 'file': '\v\.(exe|so|dll|pyc|pyd|pyo)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
@@ -391,7 +391,7 @@ inoremap kj <esc>
 
 
 " omnicppcomplete
-nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
 " for qt5 ctags generate
 "ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f qt5 /usr/include/x86_64-linux-gnu/qt5/
@@ -481,7 +481,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap <script> <silent> <F2> :call ToggleQuickFix()<CR>
+nmap <script> <silent> <F3> :call ToggleQuickFix()<CR>
 function! <SID>LocationPrevious()
   try
     lprev
@@ -503,12 +503,12 @@ nmap <silent> sn    <Plug>LocationNext
 
 " ### NerdTree
 nnoremap fr :NERDTreeFind<cr>
-nnoremap <F4> :NERDTreeToggle<cr>
+nnoremap <F3> :NERDTreeToggle<cr>
 let NERDTreeQuitOnOpen = 0
 let NERDTreeIgnore = ['\.pyc$']
 
 " ### find in files, and grep, using plugin grepper
-set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out
+set grepprg=grep\ -niI\ --exclude=tags\ --exclude=cscope.out\ --exclude=node_modules\ --exclude=dist
 " for browsing the input history
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
@@ -533,7 +533,7 @@ xnoremap FF :Grepper -dir pwd -highlight -jump -prompt -cword <cr>--
 xnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
 
 nnoremap fg :Grepper -tool git<cr>
-nnoremap fa :Grepper -tool ag<cr>
+nnoremap fa :Grepper -tool grep<cr>
 
 let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
@@ -608,7 +608,7 @@ let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
 "let g:ConqueTerm_EscKey = '<C-k>'
 let g:ConqueTerm_CloseOnEnd = 1
 " open bash in current directory
-nnoremap <F3> :ConqueTermSplit bash<CR>
+"nnoremap <F3> :ConqueTermSplit bash<CR>
 " open bash in file directory
 " oepn ipython in current directory
 
@@ -653,7 +653,20 @@ function! XTermPasteBegin()
   return ""
 endfunction
 
+set pastetoggle=<F2>
+
+" ### line indent for vue js space 2
+augroup lineindent
+    autocmd FileType vue setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType js setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
+augroup END
+
 " zencoding
 let g:user_zen_settings = {
 \  'indentation' : '  '
 \}
+
+augroup encodingutf8
+    autocmd BufReadPost * FencManualEncoding utf-8
+augroup END
