@@ -1,3 +1,6 @@
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 PS1='\u@\h:\w\$ '
 
 export PATH=~/.vim/bin:~/bin:~/root/usr/bin:$PATH

@@ -652,3 +652,8 @@ function! XTermPasteBegin()
   set paste
   return ""
 endfunction
+
+" zencoding
+let g:user_zen_settings = {
+\  'indentation' : '  '
+\}
