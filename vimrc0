@@ -652,6 +652,7 @@ function! XTermPasteBegin()
   set paste
   return ""
 endfunction
+
 set pastetoggle=<F2>
 
 " ### line indent for vue js space 2
