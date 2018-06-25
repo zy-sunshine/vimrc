@@ -19,3 +19,5 @@ alias gc='git commit'
 alias l='ls'
 alias ll='ls -l'
 alias la='ls -la'
+
+alias npm='npm --registry=https://registry.npm.taobao.org'
