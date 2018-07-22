@@ -532,6 +532,8 @@ nnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
 xnoremap FF :Grepper -dir pwd -highlight -jump -prompt -cword <cr>--
 xnoremap FS :Grepper -dir pwd -highlight -jump -prompt -cword -side <cr>--
 
+nnoremap <leader>F :Grepper -dir pwd -highlight -jump -prompt
+
 nnoremap fg :Grepper -tool git<cr>
 nnoremap fa :Grepper -tool grep<cr>
 
@@ -658,15 +660,21 @@ set pastetoggle=<F2>
 " ### line indent for vue js space 2
 augroup lineindent
     autocmd FileType vue setlocal shiftwidth=2 tabstop=2 softtabstop=2
-    autocmd FileType js setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType javascript setlocal shiftwidth=2 tabstop=2 softtabstop=2
     autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType less setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType smarty setlocal shiftwidth=2 tabstop=2 softtabstop=2
 augroup END
 
 " zencoding
 let g:user_zen_settings = {
 \  'indentation' : '  '
 \}
+let g:user_zen_leader_key = '<c-y>'
 
+let g:fencview_autodetect=0
 augroup encodingutf8
-    autocmd BufReadPost * FencManualEncoding utf-8
+    let blacklist = ['qf']
+    autocmd BufReadPost * if index(blacklist, &filetype) < 0 | FencManualEncoding utf-8
 augroup END
