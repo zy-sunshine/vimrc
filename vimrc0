@@ -252,8 +252,10 @@ set scrolloff=3
 
 noremap - :call ReplaceBlank()<CR>
 function! s:_replace_blank(text)
+    let spccol = repeat(' ', &tabstop)
     let text = a:text
     let text_new = substitute(text, "[ \t]*$", "", "")
+    let text_new = substitute(text_new, "»·", spccol, "g")
     return text_new
 endfunction
 function! ReplaceBlank()
