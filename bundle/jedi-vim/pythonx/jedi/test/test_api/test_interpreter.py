@@ -4,12 +4,20 @@ Tests of ``jedi.api.Interpreter``.
 import pytest
 
 import jedi
-from jedi._compatibility import is_py33, exec_function, py_version
+from jedi._compatibility import is_py3, py_version, is_py35
 from jedi.evaluate.compiled import mixed
 
 
-class _GlobalNameSpace():
-    class SideEffectContainer():
+if py_version > 30:
+    def exec_(source, global_map):
+        exec(source, global_map)
+else:
+    eval(compile("""def exec_(source, global_map):
+                        exec source in global_map """, 'blub', 'exec'))
+
+
+class _GlobalNameSpace:
+    class SideEffectContainer:
         pass
 
 
@@ -72,7 +80,7 @@ def test_numpy_like_non_zero():
 
 
 def test_nested_resolve():
-    class XX():
+    class XX:
         def x():
             pass
 
@@ -130,7 +138,7 @@ def test_complete_raw_instance():
     import datetime
     dt = datetime.datetime(2013, 1, 1)
     completions = ['time', 'timetz', 'timetuple']
-    if is_py33:
+    if is_py3:
         completions += ['timestamp']
     _assert_interpreter_complete('(dt - dt).ti',
                                  locals(),
@@ -160,7 +168,7 @@ def test_list():
 
 
 def test_slice():
-    class Foo1():
+    class Foo1:
         bar = []
     baz = 'xbarx'
     _assert_interpreter_complete('getattr(Foo1, baz[1:-1]).append',
@@ -169,7 +177,7 @@ def test_slice():
 
 
 def test_getitem_side_effects():
-    class Foo2():
+    class Foo2:
         def __getitem__(self, index):
             # Possible side effects here, should therefore not call this.
             if True:
@@ -182,7 +190,7 @@ def test_getitem_side_effects():
 
 def test_property_error_oldstyle():
     lst = []
-    class Foo3():
+    class Foo3:
         @property
         def bar(self):
             lst.append(1)
@@ -219,8 +227,7 @@ def test_param_completion():
     lambd = lambda xyz: 3
 
     _assert_interpreter_complete('foo(bar', locals(), ['bar'])
-    # TODO we're not yet using the Python3.5 inspect.signature, yet.
-    assert not jedi.Interpreter('lambd(xyz', [locals()]).completions()
+    assert bool(jedi.Interpreter('lambd(xyz', [locals()]).completions()) == is_py3
 
 
 def test_endless_yield():
@@ -247,13 +254,29 @@ def test_completion_param_annotations():
     # Need to define this function not directly in Python. Otherwise Jedi is to
     # clever and uses the Python code instead of the signature object.
     code = 'def foo(a: 1, b: str, c: int = 1.0): pass'
-    exec_function(code, locals())
+    exec_(code, locals())
     script = jedi.Interpreter('foo', [locals()])
     c, = script.completions()
     a, b, c = c.params
     assert a._goto_definitions() == []
     assert [d.name for d in b._goto_definitions()] == ['str']
-    assert set([d.name for d in c._goto_definitions()]) == set(['int', 'float'])
+    assert {d.name for d in c._goto_definitions()} == {'int', 'float'}
+
+
+def test_keyword_argument():
+    def f(some_keyword_argument):
+        pass
+
+    c, = jedi.Interpreter("f(some_keyw", [{'f': f}]).completions()
+    assert c.name == 'some_keyword_argument'
+    assert c.complete == 'ord_argument='
+
+    # This needs inspect.signature to work.
+    if is_py3:
+        # Make it impossible for jedi to find the source of the function.
+        f.__name__ = 'xSOMETHING'
+        c, = jedi.Interpreter("x(some_keyw", [{'x': f}]).completions()
+        assert c.name == 'some_keyword_argument'
 
 
 def test_more_complex_instances():
@@ -261,7 +284,7 @@ def test_more_complex_instances():
         def foo(self, other):
             return self
 
-    class Base():
+    class Base:
         def wow(self):
             return Something()
 
@@ -290,3 +313,46 @@ def test_repr_execution_issue():
     d, = script.goto_definitions()
     assert d.name == 'ErrorRepr'
     assert d.type == 'instance'
+
+
+def test_dir_magic_method():
+    class CompleteAttrs(object):
+        def __getattr__(self, name):
+            if name == 'foo':
+                return 1
+            if name == 'bar':
+                return 2
+            raise AttributeError(name)
+
+        def __dir__(self):
+            if is_py3:
+                names = object.__dir__(self)
+            else:
+                names = dir(object())
+            return ['foo', 'bar'] + names
+
+    itp = jedi.Interpreter("ca.", [{'ca': CompleteAttrs()}])
+    completions = itp.completions()
+    names = [c.name for c in completions]
+    assert ('__dir__' in names) == is_py3
+    assert '__class__' in names
+    assert 'foo' in names
+    assert 'bar' in names
+
+    foo = [c for c in completions if c.name == 'foo'][0]
+    assert foo._goto_definitions() == []
+
+
+def test_name_not_findable():
+    class X():
+        if 0:
+            NOT_FINDABLE
+
+        def hidden(self):
+            return
+
+        hidden.__name__ = 'NOT_FINDABLE'
+
+    setattr(X, 'NOT_FINDABLE', X.hidden)
+
+    assert jedi.Interpreter("X.NOT_FINDA", [locals()]).completions()

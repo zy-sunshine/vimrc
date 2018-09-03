@@ -20,11 +20,11 @@ make it work.
 General Features
 ----------------
 
-- python 2.6+ and 3.3+ support
-- ignores syntax errors and wrong indentation
-- can deal with complex module / function / class structures
-- virtualenv support
-- can infer function arguments from sphinx, epydoc and basic numpydoc docstrings,
+- Python 2.7 and 3.3+ support
+- Ignores syntax errors and wrong indentation
+- Can deal with complex module / function / class structures
+- Great Virtualenv support
+- Can infer function arguments from sphinx, epydoc and basic numpydoc docstrings,
   and PEP0484-style type hints (:ref:`type hinting <type-hinting>`)
 
 
@@ -47,24 +47,22 @@ Supported Python Features
 - (nested) list comprehensions / ternary expressions
 - relative imports
 - ``getattr()`` / ``__getattr__`` / ``__getattribute__``
-- function annotations (py3k feature, are ignored right now, but being parsed.
-  I don't know what to do with them.)
+- function annotations
 - class decorators (py3k feature, are being ignored too, until I find a use
   case, that doesn't work with |jedi|)
 - simple/usual ``sys.path`` modifications
 - ``isinstance`` checks for if/while/assert
-- namespace packages (includes ``pkgutil`` and ``pkg_resources`` namespaces)
+- namespace packages (includes ``pkgutil``, ``pkg_resources`` and PEP420 namespaces)
 - Django / Flask / Buildout support
 
 
-Unsupported Features
---------------------
+Not Supported
+-------------
 
 Not yet implemented:
 
 - manipulations of instances outside the instance variables without using
   methods
-- implicit namespace packages (Python 3.3+, `PEP 420 <https://www.python.org/dev/peps/pep-0420/>`_)
 
 Will probably never be implemented:
 
@@ -77,21 +75,6 @@ Will probably never be implemented:
 Caveats
 -------
 
-**Malformed Syntax**
-
-Syntax errors and other strange stuff may lead to undefined behaviour of the
-completion. |jedi| is **NOT** a Python compiler, that tries to correct you. It
-is a tool that wants to help you. But **YOU** have to know Python, not |jedi|.
-
-**Legacy Python 2 Features**
-
-This framework should work for both Python 2/3. However, some things were just
-not as *pythonic* in Python 2 as things should be. To keep things simple, some
-older Python 2 features have been left out:
-
-- Classes: Always Python 3 like, therefore all classes inherit from ``object``.
-- Generators: No ``next()`` method. The ``__next__()`` method is used instead.
-
 **Slow Performance**
 
 Importing ``numpy`` can be quite slow sometimes, as well as loading the
@@ -103,7 +86,7 @@ etc.
 **Security**
 
 Security is an important issue for |jedi|. Therefore no Python code is
-executed.  As long as you write pure python, everything is evaluated
+executed.  As long as you write pure Python, everything is evaluated
 statically. But: If you use builtin modules (``c_builtin``) there is no other
 option than to execute those modules. However: Execute isn't that critical (as
 e.g. in pythoncomplete, which used to execute *every* import!), because it
@@ -132,8 +115,7 @@ one of the following docstring/annotation syntax styles:
 
 https://www.python.org/dev/peps/pep-0484/
 
-function annotations (python 3 only; python 2 function annotations with
-comments in planned but not yet implemented)
+function annotations
 
 ::
 
@@ -144,7 +126,7 @@ comments in planned but not yet implemented)
         node.| # complete here
 
 
-assignment, for-loop and with-statement type hints (all python versions).
+assignment, for-loop and with-statement type hints (all Python versions).
 Note that the type hints must be on the same line as the statement
 
 ::
@@ -157,7 +139,7 @@ Note that the type hints must be on the same line as the statement
         print(f + 3)
 
 Most of the features in PEP-0484 are supported including the typing module
-(for python < 3.5 you have to do ``pip install typing`` to use these),
+(for Python < 3.5 you have to do ``pip install typing`` to use these),
 and forward references.
 
 Things that are missing (and this is not an exhaustive list; some of these
@@ -172,7 +154,7 @@ are planned, others might be hard to implement and provide little worth):
 
 **Sphinx style**
 
-http://sphinx-doc.org/domains.html#info-field-lists
+http://www.sphinx-doc.org/en/stable/domains.html#info-field-lists
 
 ::
 
@@ -237,7 +219,7 @@ A little history
 
 The Star Wars Jedi are awesome. My Jedi software tries to imitate a little bit
 of the precognition the Jedi have. There's even an awesome `scene
-<http://www.youtube.com/watch?v=5BDO3pyavOY>`_ of Monty Python Jedis :-).
+<https://youtu.be/yHRJLIf7wMU>`_ of Monty Python Jedis :-).
 
 But actually the name hasn't so much to do with Star Wars. It's part of my
 second name.

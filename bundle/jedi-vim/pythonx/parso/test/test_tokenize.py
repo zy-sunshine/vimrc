@@ -6,11 +6,23 @@ import pytest
 
 from parso._compatibility import py_version
 from parso.utils import split_lines, parse_version_string
-from parso.python.token import (
-    NAME, NEWLINE, STRING, INDENT, DEDENT, ERRORTOKEN, ENDMARKER, ERROR_DEDENT)
+from parso.python.token import PythonTokenTypes
 from parso.python import tokenize
 from parso import parse
 from parso.python.tokenize import PythonToken
+
+
+# To make it easier to access some of the token types, just put them here.
+NAME = PythonTokenTypes.NAME
+NEWLINE = PythonTokenTypes.NEWLINE
+STRING = PythonTokenTypes.STRING
+INDENT = PythonTokenTypes.INDENT
+DEDENT = PythonTokenTypes.DEDENT
+ERRORTOKEN = PythonTokenTypes.ERRORTOKEN
+OP = PythonTokenTypes.OP
+ENDMARKER = PythonTokenTypes.ENDMARKER
+ERROR_DEDENT = PythonTokenTypes.ERROR_DEDENT
+FSTRING_START = PythonTokenTypes.FSTRING_START
 
 
 def _get_token_list(string):
@@ -126,7 +138,7 @@ def test_identifier_contains_unicode():
     else:
         # Unicode tokens in Python 2 seem to be identified as operators.
         # They will be ignored in the parser, that's ok.
-        assert unicode_token[0] == tokenize.ERRORTOKEN
+        assert unicode_token[0] == OP
 
 
 def test_quoted_strings():
@@ -162,8 +174,9 @@ def test_ur_literals():
         token_list = _get_token_list(literal)
         typ, result_literal, _, _ = token_list[0]
         if is_literal:
-            assert typ == STRING
-            assert result_literal == literal
+            if typ != FSTRING_START:
+                assert typ == STRING
+                assert result_literal == literal
         else:
             assert typ == NAME
 
@@ -175,6 +188,7 @@ def test_ur_literals():
     # Starting with Python 3.3 this ordering is also possible.
     if py_version >= 33:
         check('Rb""')
+
     # Starting with Python 3.6 format strings where introduced.
     check('fr""', is_literal=py_version >= 36)
     check('rF""', is_literal=py_version >= 36)
@@ -184,17 +198,16 @@ def test_ur_literals():
 
 def test_error_literal():
     error_token, endmarker = _get_token_list('"\n')
-    assert error_token.type == tokenize.ERRORTOKEN
-    assert endmarker.prefix == ''
-    assert error_token.string == '"\n'
-    assert endmarker.type == tokenize.ENDMARKER
-    assert endmarker.prefix == ''
+    assert error_token.type == ERRORTOKEN
+    assert error_token.string == '"'
+    assert endmarker.type == ENDMARKER
+    assert endmarker.prefix == '\n'
 
     bracket, error_token, endmarker = _get_token_list('( """')
-    assert error_token.type == tokenize.ERRORTOKEN
+    assert error_token.type == ERRORTOKEN
     assert error_token.prefix == ' '
     assert error_token.string == '"""'
-    assert endmarker.type == tokenize.ENDMARKER
+    assert endmarker.type == ENDMARKER
     assert endmarker.prefix == ''
 
 
@@ -224,3 +237,12 @@ def test_endmarker_end_pos():
 def test_indentation(code, types):
     actual_types = [t.type for t in _get_token_list(code)]
     assert actual_types == types + [ENDMARKER]
+
+
+def test_error_string():
+    t1, endmarker = _get_token_list(' "\n')
+    assert t1.type == ERRORTOKEN
+    assert t1.prefix == ' '
+    assert t1.string == '"'
+    assert endmarker.prefix == '\n'
+    assert endmarker.string == ''

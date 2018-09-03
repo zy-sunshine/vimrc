@@ -91,6 +91,12 @@ d.items()[0][0]
 #? int()
 d.items()[0][1]
 
+(a, b), = {a:1 for a in [1.0]}.items()
+#? float()
+a
+#? int()
+b
+
 # -----------------
 # tuples
 # -----------------
@@ -116,8 +122,6 @@ tup4.index
 # -----------------
 # set
 # -----------------
-# Set literals are not valid in 2.6.
-# python >= 2.7
 set_t = {1,2}
 
 #? ['clear', 'copy']

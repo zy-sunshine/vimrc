@@ -484,3 +484,45 @@ def test_indentation_issue(differ):
 
     differ.initialize(code1)
     differ.parse(code2, parsers=2)
+
+
+def test_endmarker_newline(differ):
+    code1 = dedent('''\
+        docu = None
+        # some comment
+        result = codet
+        incomplete_dctassign = {
+            "module"
+
+        if "a":
+            x = 3 # asdf
+    ''')
+
+    code2 = code1.replace('codet', 'coded')
+
+    differ.initialize(code1)
+    differ.parse(code2, parsers=2, copies=2, expect_error_leaves=True)
+
+
+def test_newlines_at_end(differ):
+    differ.initialize('a\n\n')
+    differ.parse('a\n', copies=1)
+
+
+def test_end_newline_with_decorator(differ):
+    code = dedent('''\
+        @staticmethod
+        def spam():
+            import json
+            json.l''')
+
+    differ.initialize(code)
+    module = differ.parse(code + '\n', copies=1)
+    decorated, endmarker = module.children
+    assert decorated.type == 'decorated'
+    decorator, func = decorated.children
+    suite = func.children[-1]
+    assert suite.type == 'suite'
+    newline, first_stmt, second_stmt = suite.children
+    assert first_stmt.get_code() == '    import json\n'
+    assert second_stmt.get_code() == '    json.l\n'
