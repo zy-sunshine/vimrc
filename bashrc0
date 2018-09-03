@@ -24,3 +24,15 @@ alias ll='ls -l'
 alias la='ls -la'
 
 alias npm='npm --registry=https://registry.npm.taobao.org'
+
+changePS1()
+{
+  if [ ! -n "$1" ]; then
+    export PS1='\u@\h:\w\$ '
+  else
+    export PS1="($1)\u@\h:\w\$ "
+  fi
+}
+
+alias proxy='export all_proxy=http://127.0.0.1:1087 && changePS1 "proxy"'
+alias unproxy='unset all_proxy && changePS1'
