@@ -311,6 +311,8 @@ nnoremap fb :CtrlPBuffer<cr>
 nnoremap ft :CtrlPTag<cr>
 let g:ctrlp_map = 'fp'
 let g:ctrlp_cmd = 'CtrlPCurWD'
+"let g:ctrlp_max_depth = 40
+"let g:ctrlp_max_files = 50000
 
 " Settings for python-mode
 " Note: I'm no longer using this. Leave this commented out
