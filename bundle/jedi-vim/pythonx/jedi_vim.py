@@ -15,6 +15,10 @@ try:
 except ImportError:
     from itertools import izip_longest as zip_longest  # Python 2
 
+if os.name == 'nt':
+    # fix gvim.exe env executable to be gvim.exe path
+    sys.executable=os.path.join(sys.prefix, 'python.exe')
+
 import vim
 
 is_py3 = sys.version_info[0] >= 3
