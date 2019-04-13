@@ -18,22 +18,22 @@ let g:autotag_vim_version_sourced=s:autotag_vim_version
 " just saved, removes all entries for that source file and *then* runs ctags -a
 
 if has("python") || has("python3")
-   if has("python")
+   if has("python3")
+      python3 import sys, os, vim
+      python3 sys.path.insert(0, os.path.dirname(vim.eval('expand("<sfile>")')))
+      python3 from autotag import autotag
+   else
       python  import sys, os, vim
       python  sys.path.insert(0, os.path.dirname(vim.eval('expand("<sfile>")')))
       python  from __future__ import print_function
       python  from autotag import autotag
-   else
-      python3 import sys, os, vim
-      python3 sys.path.insert(0, os.path.dirname(vim.eval('expand("<sfile>")')))
-      python3 from autotag import autotag
    endif
 
    function! AutoTag()
-      if has("python")
-         python  autotag()
+      if has("python3")
+         python3  autotag()
       else
-         python3 autotag()
+         python autotag()
       endif
       if exists(":TlistUpdate")
          TlistUpdate
