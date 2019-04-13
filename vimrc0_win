@@ -350,7 +350,7 @@ let g:jedi#goto_assignments_command = "gs"
 "" let g:jedi#popup_select_first = 0
 "" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
 " macos vim 8.1.250 上设置有效
-let g:jedi#force_py_version = 3
+" let g:jedi#force_py_version = 3
 " Add the virtualenv's site-packages to vim path
 let g:virtualenv_auto_activate = 1
 
