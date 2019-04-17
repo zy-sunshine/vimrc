@@ -312,6 +312,7 @@ let g:ctrlp_working_path_mode = 0
 let g:ctrlp_extensions = ['tag']
 nnoremap fb :CtrlPBuffer<cr>
 nnoremap ft :CtrlPTag<cr>
+nnoremap fc :CtrlPClearCache<cr>
 let g:ctrlp_map = 'fp'
 let g:ctrlp_cmd = 'CtrlPCurWD'
 "let g:ctrlp_max_depth = 40
