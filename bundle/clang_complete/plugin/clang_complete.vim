@@ -26,12 +26,12 @@ let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 " Older versions of Vim can't check if a map was made with <expr>
 let s:use_maparg = v:version > 703 || (v:version == 703 && has('patch32'))
 
-if has('python')
-  let s:py_cmd = 'python'
-  let s:pyfile_cmd = 'pyfile'
-elseif has('python3')
+if has('python3')
   let s:py_cmd = 'python3'
   let s:pyfile_cmd = 'py3file'
+elseif has('python')
+  let s:py_cmd = 'python'
+  let s:pyfile_cmd = 'pyfile'
 endif
 
 function! s:ClangCompleteInit()
