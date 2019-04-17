@@ -416,11 +416,12 @@ nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.
 " path to directory where library can be found
 "let g:clang_library_path='/usr/lib/llvm-3.6/lib'
 " or path directly to the library file
-if filereadable("/usr/lib/llvm-3.6/lib/libclang.so.1")
-    let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
-elseif filereadable("/usr/lib64/libclang.so")
-    let g:clang_library_path='/usr/lib64/libclang.so'
-endif
+"if filereadable("/usr/lib/llvm-3.6/lib/libclang.so.1")
+"    let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
+"elseif filereadable("/usr/lib64/libclang.so")
+"    let g:clang_library_path='/usr/lib64/libclang.so'
+"endif
+let g:clang_library_path="C:\\Program Files\\LLVM\\bin\\libclang.dll"
 "let g:clang_omnicppcomplete_compliance=1
 "let g:clang_make_default_keymappings=0
 let g:clang_complete_macros=1
