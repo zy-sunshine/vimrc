@@ -553,6 +553,7 @@ let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
 let g:grepper.open      = 1
 let g:grepper.jump      = 0
+let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules $* .' }
 "let g:grepper.next_tool = '<leader>f'  " default is <TAB>
 
 command! Todo :Grepper
