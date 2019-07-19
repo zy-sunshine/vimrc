@@ -2,6 +2,9 @@ set nocompatible
 " Sample .vimrc file by Martin Brochhaus
 " Presented at PyCon APAC 2012
 
+if has("python3")
+    py3 import os; sys.executable=os.path.join(sys.prefix, 'python.exe')
+endif
 
 " ============================================
 " Note to myself:
@@ -128,7 +131,7 @@ filetype plugin indent on
 syntax on
 
 " Color scheme
-" mkdir -p ~/.vim/colors && cd ~/.vim/colors
+" mkdir -p ~/vimfiles/colors && cd ~/vimfiles/colors
 " Wget -O wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 "set t_Co=256
 "color wombat256mod
@@ -147,8 +150,8 @@ colorscheme solarized
 
 " show tabs and spaces
 "set list
-"set listchars=tab:>-,extends:#
-set listchars=tab:»·,trail:·
+set listchars=tab:>-,extends:#
+"set listchars=tab:»·,trail:·
 set list
 
 " Showing line numbers and length
@@ -193,8 +196,8 @@ set ignorecase
 cmap w!! w !sudo tee % >/dev/null
 
 " Setup Pathogen to manage your plugins
-" mkdir -p ~/.vim/autoload ~/.vim/bundle
-" curl -so ~/.vim/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+" mkdir -p ~/vimfiles/autoload ~/vimfiles/bundle
+" curl -so ~/vimfiles/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
 " Now you can install any plugin into a .vim/bundle/plugin-name/ folder
 " Pathogen load
 call pathogen#infect()
@@ -281,13 +284,13 @@ iabbrev ccopy Copyright 2017 Zhang Yang, all rights reserved.
 
 
 " Settings for vim-powerline
-" cd ~/.vim/bundle
+" cd ~/vimfiles/bundle
 " git clone git://github.com/Lokaltog/vim-powerline.git
 set laststatus=2
 
 
 " Settings for ctrlp
-" cd ~/.vim/bundle
+" cd ~/vimfiles/bundle
 " git clone https://github.com/kien/ctrlp.vim.git
 let g:ctrlp_max_height = 30
 "" set wildignore+=*.pyc
@@ -318,7 +321,7 @@ let g:ctrlp_cmd = 'CtrlPCurWD'
 " Settings for python-mode
 " Note: I'm no longer using this. Leave this commented out
 " and uncomment the part about jedi-vim instead
-" cd ~/.vim/bundle
+" cd ~/vimfiles/bundle
 " git clone https://github.com/klen/python-mode
 "" map <Leader>g :call RopeGotoDefinition()<CR>
 "" let ropevim_enable_shortcuts = 1
@@ -338,7 +341,7 @@ let g:ctrlp_cmd = 'CtrlPCurWD'
 "" let g:pymode_rope_autoimport_modules = ['os', 'sys', 'shutil', 'datetime']
 
 " Settings for jedi-vim
-" cd ~/.vim/bundle
+" cd ~/vimfiles/bundle
 " git clone git://github.com/davidhalter/jedi-vim.git
 let g:jedi#completions_command = "<C-j>"
 let g:jedi#usages_command = "fu"
@@ -348,7 +351,7 @@ let g:jedi#goto_assignments_command = "gs"
 "" let g:jedi#popup_select_first = 0
 "" map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
 " macos vim 8.1.250 上设置有效
-"let g:jedi#force_py_version = 3
+" let g:jedi#force_py_version = 3
 " Add the virtualenv's site-packages to vim path
 let g:virtualenv_auto_activate = 1
 
@@ -371,16 +374,16 @@ inoremap <silent><C-k> <C-R>=OmniPopup('k')<CR>
 
 
 " Python folding
-" mkdir -p ~/.vim/ftplugin
-" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
+" mkdir -p ~/vimfiles/ftplugin
+" wget -O ~/vimfiles/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
 set nofoldenable
 
 " ## edit key mappings
 
 " Shortcut to open vimrc
-nnoremap <Leader>ev :split ~/.vim/vimrc0<cr>
-nnoremap <Leader>ep :split ~/.vim/UltiSnips/python.snippets<cr>
-nnoremap <Leader>eo :split ~/.vim/bundle/vim-snippets/UltiSnips/python.snippets<cr>
+nnoremap <Leader>ev :split ~/vimfiles/vimrc0<cr>
+nnoremap <Leader>ep :split ~/vimfiles/UltiSnips/python.snippets<cr>
+nnoremap <Leader>eo :split ~/vimfiles/bundle/vim-snippets/UltiSnips/python.snippets<cr>
 
 " ### add " ' wrap functions
 nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
@@ -397,8 +400,7 @@ inoremap kj <esc>
 
 
 " omnicppcomplete
-nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
-    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
+nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
 
 nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.h"
@@ -415,13 +417,12 @@ nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.
 " path to directory where library can be found
 "let g:clang_library_path='/usr/lib/llvm-3.6/lib'
 " or path directly to the library file
-if filereadable("/usr/lib/llvm-3.6/lib/libclang.so.1")
-    let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
-elseif filereadable("/usr/lib64/libclang.so")
-    let g:clang_library_path='/usr/lib64/libclang.so'
-elseif filereadable("/usr/lib/llvm-6.0/lib/libclang-6.0.so.1")
-    let g:clang_library_path='/usr/lib/llvm-6.0/lib/libclang-6.0.so.1'
-endif
+"if filereadable("/usr/lib/llvm-3.6/lib/libclang.so.1")
+"    let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
+"elseif filereadable("/usr/lib64/libclang.so")
+"    let g:clang_library_path='/usr/lib64/libclang.so'
+"endif
+let g:clang_library_path="C:\\Program Files\\LLVM\\bin\\libclang.dll"
 "let g:clang_omnicppcomplete_compliance=1
 "let g:clang_make_default_keymappings=0
 let g:clang_complete_macros=1
@@ -461,7 +462,7 @@ let g:syntastic_check_on_wq = 0
 "let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_python_flake8_post_args =
-    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261,E305',
+    \ [ '--ignore=E301,E302,E305,E402,E251,E265,E272,E712,E128,E711,E201,E202,E221,E701,E401,E226,E704,E999,E261,E305,E266,W504',
     \   '--max-line-length=120',
     \   '--max-complexity=12',
     \   '--builtins=_' ]
@@ -556,7 +557,7 @@ let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
 let g:grepper.open      = 1
 let g:grepper.jump      = 0
-let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules --exclude-dir=.git $* .' }
+let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules $* .' }
 "let g:grepper.next_tool = '<leader>f'  " default is <TAB>
 
 command! Todo :Grepper
@@ -599,8 +600,8 @@ augroup END
 " ### python compiler
 augroup au_python
     autocmd!
-    autocmd FileType python source ~/.vim/compiler/python.vim
-    autocmd FileType python source ~/.vim/compiler/py_compile.vim
+    autocmd FileType python source ~/vimfiles/compiler/python.vim
+    autocmd FileType python source ~/vimfiles/compiler/py_compile.vim
 augroup END
 " auto open quickfix when asyncrun start
 augroup au_asyncrun
@@ -620,7 +621,7 @@ let g:ultisnips_python_style = 'doxygen'
 let g:UltiSnipsEditSplit="vertical"
 let g:ultisnips_python_triple_quoting_style='single'
 
-let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips/'
+let g:UltiSnipsSnippetsDir = '~/vimfiles/UltiSnips/'
 
 " conqueTerm
 "let g:ConqueTerm_EscKey = '<C-k>'
@@ -695,3 +696,14 @@ augroup encodingutf8
     let blacklist = ['qf']
     autocmd BufReadPost * if index(blacklist, &filetype) < 0 | FencManualEncoding utf-8
 augroup END
+
+" font on windows or gui running
+if has("gui_running")
+  if has("gui_gtk2")
+    set guifont=Inconsolata\ 12
+  elseif has("gui_macvim")
+    set guifont=Menlo\ Regular:h14
+  elseif has("gui_win32")
+    set guifont=Consolas:h12:cANSI
+  endif
+endif
