@@ -396,7 +396,8 @@ inoremap kj <esc>
 
 
 " omnicppcomplete
-nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
+nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
+    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
 
 nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.h"
@@ -417,6 +418,8 @@ if filereadable("/usr/lib/llvm-3.6/lib/libclang.so.1")
     let g:clang_library_path='/usr/lib/llvm-3.6/lib/libclang.so.1'
 elseif filereadable("/usr/lib64/libclang.so")
     let g:clang_library_path='/usr/lib64/libclang.so'
+elseif filereadable("/usr/lib/llvm-6.0/lib/libclang-6.0.so.1")
+    let g:clang_library_path='/usr/lib/llvm-6.0/lib/libclang-6.0.so.1'
 endif
 "let g:clang_omnicppcomplete_compliance=1
 "let g:clang_make_default_keymappings=0
@@ -552,6 +555,8 @@ let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
 let g:grepper.open      = 1
 let g:grepper.jump      = 0
+let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules --exclude-dir=.git $* .' }
+
 "let g:grepper.next_tool = '<leader>f'  " default is <TAB>
 
 command! Todo :Grepper
