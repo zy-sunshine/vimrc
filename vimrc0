@@ -398,7 +398,8 @@ inoremap kj <esc>
 
 " omnicppcomplete
 nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
-    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q .<CR>
+    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --exclude=*.sql
+    \ --extra=+q .<CR>
     \:UMiniBufExplorer<CR>
 
 nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.h"
@@ -695,3 +696,15 @@ augroup encodingutf8
     let blacklist = ['qf']
     autocmd BufReadPost * if index(blacklist, &filetype) < 0 | FencManualEncoding utf-8
 augroup END
+
+noremap <Leader>y "*y
+noremap <Leader>p "*p
+noremap <Leader>Y "+y
+noremap <Leader>P "+p
+
+if bufwinnr(1)
+  noremap + <C-W>+
+  noremap - <C-W>-
+  noremap < <C-W><
+  noremap > <C-W>>
+endif
