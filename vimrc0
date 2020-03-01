@@ -708,3 +708,8 @@ if bufwinnr(1)
   noremap < <C-W><
   noremap > <C-W>>
 endif
+
+augroup rst_ft
+  au!
+  autocmd BufNewFile,BufRead *.txt   set syntax=rst
+augroup END
