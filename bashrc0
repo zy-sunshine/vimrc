@@ -34,6 +34,15 @@ changePS1()
   fi
 }
 
-export MY_PROXY=http://127.0.0.1:1080
-alias proxy='export all_proxy=$MY_PROXY && export HTTP_PROXY=$MY_PROXY && export HTTPS_PROXY=$MY_PROXY && changePS1 "proxy"'
-alias unproxy='unset all_proxy && unset HTTP_PROXY && unset HTTPS_PROXY && changePS1'
+setProxy() {
+  MY_PROXY=$1
+  export MY_PROXY=$MY_PROXY
+  export all_proxy=$MY_PROXY && export HTTP_PROXY=$MY_PROXY && export HTTPS_PROXY=$MY_PROXY && changePS1 "proxy"
+}
+
+unsetProxy() {
+  unset all_proxy && unset HTTP_PROXY && unset HTTPS_PROXY && changePS1
+}
+
+alias proxy="setProxy http://127.0.0.1:1080"
+alias unproxy="unsetProxy"
