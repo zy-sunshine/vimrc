@@ -422,6 +422,8 @@ elseif filereadable("/usr/lib64/libclang.so")
     let g:clang_library_path='/usr/lib64/libclang.so'
 elseif filereadable("/usr/lib/llvm-6.0/lib/libclang-6.0.so.1")
     let g:clang_library_path='/usr/lib/llvm-6.0/lib/libclang-6.0.so.1'
+elseif filereadable("/usr/local/opt/llvm/lib/libLLVM.dylib")
+    let g:clang_library_path='/usr/local/opt/llvm/lib/libLLVM.dylib'
 endif
 "let g:clang_omnicppcomplete_compliance=1
 "let g:clang_make_default_keymappings=0
@@ -712,4 +714,10 @@ endif
 augroup rst_ft
   au!
   autocmd BufNewFile,BufRead *.txt   set syntax=rst
+augroup END
+
+augroup cmake_ft
+  au!
+  autocmd BufRead,BufNewFile *.cmake,CMakeLists.txt,*.cmake.in,*.mk set filetype=cmake
+  autocmd BufRead,BufNewFile *.ctest,*.ctest.in set filetype=cmake
 augroup END
