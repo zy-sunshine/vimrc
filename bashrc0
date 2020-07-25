@@ -47,3 +47,13 @@ unsetProxy() {
 
 alias proxy="setProxy http://127.0.0.1:1080"
 alias unproxy="unsetProxy"
+
+## For macos
+
+# Add git-completion.bash
+# https://blog.csdn.net/kun525331194/article/details/54262903
+# $ cd /usr/local/opt/bash-completion/etc/bash_completion.d
+# $ curl -L -O https://raw.github.com/git/git/master/contrib/completion/git-completion.bash
+# $ brew unlink bash-completion
+# $ brew link bash-completion
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
