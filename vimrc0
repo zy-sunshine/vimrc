@@ -399,11 +399,11 @@ inoremap kj <esc>
 " omnicppcomplete
 nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
     \ --exclude=tags --exclude=cscope.out --exclude=node_modules --exclude=*.sql
-    \ --extra=+q .<CR>
-    \:UMiniBufExplorer<CR>
+    \ --exclude=cmake-build-debug --exclude=cmake-build-release --extra=+q .
 
 nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.h"
     \ -exec ctags -a --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
+    \ --exclude=cmake-build-debug --exclude=cmake-build-release
     \ --exclude=tags --exclude=cscope.out --exclude=node_modules --extra=+q {} +<CR>
 
 " for qt5 ctags generate
@@ -498,6 +498,9 @@ function! ToggleQuickFix()
   endif
 endfunction
 
+" syntastic javascript options
+let g:syntastic_javascript_checkers = ['eslint']
+
 "nmap <script> <silent> <F3> :call ToggleQuickFix()<CR>
 nnoremap <Leader>q :call ToggleQuickFix()<CR>
 function! <SID>LocationPrevious()
@@ -559,7 +562,7 @@ let g:grepper           = {}
 let g:grepper.tools     = ['grep', 'git', 'ag']
 let g:grepper.open      = 1
 let g:grepper.jump      = 0
-let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules --exclude-dir=.git $* .' }
+let g:grepper.grep = { 'grepprg': 'grep -RIn --exclude=tags --exclude-dir=node_modules --exclude=cmake-build-debug --exclude=cmake-build-release --exclude-dir=.git $* .' }
 "let g:grepper.next_tool = '<leader>f'  " default is <TAB>
 
 command! Todo :Grepper
@@ -685,6 +688,8 @@ augroup lineindent
     autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2 softtabstop=2
     autocmd FileType less setlocal shiftwidth=2 tabstop=2 softtabstop=2
     autocmd FileType smarty setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    " 解决滑动过快高亮失效问题
+    autocmd FileType vue syntax sync fromstart
 augroup END
 
 " zencoding

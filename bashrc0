@@ -26,6 +26,8 @@ alias la='ls -la'
 
 alias npm='npm --registry=https://registry.npm.taobao.org'
 
+export HISTSIZE=5000
+
 changePS1()
 {
   if [ ! -n "$1" ]; then
@@ -57,3 +59,7 @@ alias unproxy="unsetProxy"
 # $ brew unlink bash-completion
 # $ brew link bash-completion
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+if [ -z "$USERNAME" ];then
+    export USERNAME="netsec"
+fi
