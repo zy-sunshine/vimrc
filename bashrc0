@@ -4,7 +4,7 @@ export LANG=en_US.UTF-8
 export CLICOLOR=1
 PS1='\u@\h:\w\$ '
 
-export PATH=~/.vim/bin:~/bin:~/root/usr/bin:$PATH
+export PATH=~/.vim/bin_dbg:~/.vim/bin:~/bin:~/root/usr/bin:$PATH
 
 [[ -s "/home/netsec/.gvm/scripts/gvm" ]] && source "/home/netsec/.gvm/scripts/gvm"
 #source ~/venv3/bin/activate

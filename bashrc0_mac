@@ -1,4 +1,4 @@
 source ~/.vim/bashrc0
 
 ANDROID_TOOLS=~/Library/Android/sdk/platform-tools:/Applications/Genymotion.app/Contents/MacOS/tools
-export PATH=$PATH:$ANDROID_TOOLS
+export PATH=~/.vim/bin_mac:$PATH:$ANDROID_TOOLS
