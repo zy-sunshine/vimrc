@@ -395,10 +395,16 @@ inoremap <esc> <nop>
 inoremap jk <esc>
 inoremap kj <esc>
 
+nnoremap <Leader>s :!bash<cr>
+
 
 " omnicppcomplete
 nnoremap <F5> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
-    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --exclude=*.sql
+    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --exclude="*.sql"
+    \ --exclude=cmake-build-debug --exclude=cmake-build-release --extra=+q .
+
+nnoremap <Leader>r :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --exclude=dist
+    \ --exclude=tags --exclude=cscope.out --exclude=node_modules --exclude="*.sql"
     \ --exclude=cmake-build-debug --exclude=cmake-build-release --extra=+q .
 
 nnoremap <F6> :!find -name "*.cpp" -o -name "*.cxx" -o -name "*.cc" -o -name "*.h"
