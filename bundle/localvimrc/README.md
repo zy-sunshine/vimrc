@@ -6,15 +6,15 @@ of the file up to the root directory. By default those files are loaded in
 order from the root directory to the directory of the file. The filename and
 amount of loaded files are customizable through global variables.
 
-For security reasons it the plugin asks for confirmation before loading a
-local vimrc file and loads it using |:sandbox| command. The plugin asks once
-per session and local vimrc before loading it, if the file didn't change since
+For security reasons it the plugin asks for confirmation before loading a local
+vimrc file and loads it using |:sandbox| command. The plugin asks once per
+session and local vimrc before loading it, if the file didn't change since
 previous loading.
 
 It is possible to define a whitelist and a blacklist of local vimrc files that
 are loaded or ignored unconditionally.
 
-The plugin can be found on [Bitbucket], [GitHub] and [VIM online].
+The plugin can be found on [GitHub] and [VIM online].
 
 ## Commands
 
@@ -27,15 +27,54 @@ Resource all local vimrc files for the current buffer.
 Clear all stored decisions made in the past, when the plugin asked about
 sourcing a local vimrc file.
 
+### The `LocalVimRCCleanup` command
+
+Remove all stored decisions for local vimrc files that no longer exist.
+
+### The `LocalVimRCForget` command
+
+Remove stored decisions for given local vimrc files.
+
 ### The `LocalVimRCEdit` command
 
 Open the local vimrc file for the current buffer in an split window for
 editing. If more than one local vimrc file has been sourced, the user can
 decide which file to edit.
 
+### The `LocalVimRCEnable` command
+
+Globally enable the loading of local vimrc files if loading has been disabled
+by |LocalVimRCDisable| or by setting |g:localvimrc_enable| to `0` during
+startup.
+
+Enabling local vimrc using this command will trigger loading of local vimrc
+files for the currently active buffer. It will *not* load the local vimrc files
+for any other buffer. This will be done by an autocommand later when another
+buffer gets active and the configured |g:localvimrc_event| autocommand gets
+active. This is the case for the default |BufWinEnter|.
+
+### The `LocalVimRCDisable` command
+
+Globally disable the loading of local vimrc files if loading has been disabled
+by |LocalVimRCEnable| or by setting |g:localvimrc_enable| to `1` during
+startup.
+
+### The `LocalVimRCDebugShow` command
+
+Show all stored debugging messages. To see any message with this command
+debugging needs to be enabled with |g:localvimrc_debug|. The number of messages
+stored and printed can be limited using the setting |g:localvimrc_debug_lines|.
+
+### The `LocalVimRCDebugDump` command
+
+Write all stored debugging messages to given file. To write any message with
+this command debugging needs to be enabled with |g:localvimrc_debug|. The
+number of messages stored and written can be limited using the setting
+|g:localvimrc_debug_lines|.
+
 ## Functions
 
-### The `LocalVimRCFinish` command
+### The `LocalVimRCFinish` function
 
 After a call to this function the sourcing of any remaining local vimrc files
 will be skipped. In combination with the |g:localvimrc_reverse| option it is
@@ -130,19 +169,34 @@ this session for the currently edited file. Set to `0` otherwise.
 
 ## Settings
 
-To change settings from their default add  similar line to your global |vimrc| file.
+To change settings from their default add  similar line to your global |vimrc|
+file.
 
 ``` {.vim}
 let g:option_name=option_value
 ```
+
+### The `g:localvimrc_enable` setting
+
+Globally enable/disable loading of local vimrc files globally. The behavior can
+be changed during runtime using the commands |LocalVimRCEnable| and
+|LocalVimRCDisable|.
+
+  - Value `0`: Disable loading of any local vimrc files.
+  - Value `1`: Enable loading of local vimrc files.
+  - Default: `1`
 
 ### The `g:localvimrc_name` setting
 
 List of filenames of local vimrc files. The given name can include a directory
 name such as ".config/localvimrc".
 
-Previous versions of localvimrc only supported a single file as string. This
-is still supported for backward compatibility.
+Previous versions of localvimrc only supported a single file as string. This is
+still supported for backward compatibility.
+
+By default the local vimrc files are expected to contain vim script. For Neovim
+there is additional support for Lua. In order to use Lua code in the local
+vimrc, the file name must have the extension `.lua`.
 
   - Default: `[ ".lvimrc" ]`
 
@@ -151,6 +205,8 @@ is still supported for backward compatibility.
 List of autocommand events that trigger local vimrc file loading.
 
   - Default: `[ "BufWinEnter" ]`
+
+For more information see |autocmd-events|.
 
 ------------------------------------------------------------
 
@@ -162,10 +218,28 @@ BufWinEnter is the default to enable lines like
 setlocal colorcolumn=+1
 ```
 
-in the local vimrc file. Settings "local to window" need to be set for
-every time a buffer is displayed in a window.
+in the local vimrc file. Settings "local to window" need to be set for every
+time a buffer is displayed in a window.
+
+Because the plugin searches local vimrc files in the path of the currently
+opened file not all autocommand events make sense. For example the event
+|VimEnter| might cause problems. When that event is emitted it is possible that
+no file is opened but some temporary buffer is currently shown. This will lead
+to an unexpected behavior. If you would like to apply settings only once per
+running Vim instance please use |g:localvimrc_sourced_once_for_file| and
+|g:localvimrc_sourced_once|. An example how to use those variables in a local
+vimrc file is described in the introduction to |localvimrc-variables|.
 
 ------------------------------------------------------------
+
+### The `g:localvimrc_event_pattern` setting
+
+String defining the pattern for which the autocommand events trigger local
+vimrc file loading.
+
+  - Default: `"*"`
+
+For more information see |autocmd-patterns|.
 
 ### The `g:localvimrc_reverse` setting
 
@@ -211,8 +285,8 @@ Source the found local vimrc files in a sandbox for security reasons.
 
 ### The `g:localvimrc_ask` setting
 
-Ask before sourcing any local vimrc file. In a vim session the question is
-only asked once as long as the local vimrc file has not been changed.
+Ask before sourcing any local vimrc file. In a vim session the question is only
+asked once as long as the local vimrc file has not been changed.
 
   - Value `0`: Don't ask before loading a vimrc file.
   - Value `1`: Ask before loading a vimrc file.
@@ -242,8 +316,8 @@ local vimrc files.
 If a local vimrc file matches the regular expression given by
 |g:localvimrc_whitelist| this file is loaded unconditionally.
 
-Files matching |g:localvimrc_whitelist| are sourced even if they are matched
-by |g:localvimrc_blacklist|.
+Files matching |g:localvimrc_whitelist| are sourced even if they are matched by
+|g:localvimrc_blacklist|.
 
 See |regular-expression| for patterns that are accepted.
 
@@ -288,15 +362,44 @@ every local vimrc file.
 
   - Default: `1`
 
+### The `g:localvimrc_python2_enable` setting
+
+Enable probing whether python 2 is available and usable for calculating local
+vimrc file checksums, in case |sha256()| is not available.
+
+- Default: `1`
+
+### The `g:localvimrc_python3_enable` setting
+
+Enable probing whether python 3 is available and usable for calculating local
+vimrc file checksums, in case |sha256()| is not available.
+
+- Default: `1`
+
 ### The `g:localvimrc_debug` setting
 
-Debug level for this script.
+Debug level for this script. The messages can be shown with
+|LocalVimRCDebugShow| or written to a file with |LocalVimRCDebugDump|.
 
   - Default: `0`
 
+### The `g:localvimrc_debug_lines` setting
+
+Limit for the number of debug messages stored. The messages can be shown with
+|LocalVimRCDebugShow| or written to a file with |LocalVimRCDebugDump|.
+
+  - Default: `100`
+
 ## Autocommands
 
-If enabled localvimrc emits autocommands before and after sourcing an local vimrc file.
+If enabled localvimrc emits autocommands before and after sourcing a local
+vimrc file. The autocommands are emitted as |User| events. Because of that
+commands need to be registered in the following way:
+
+``` {.vim}
+autocmd User LocalVimRCPre  echom 'before loading local vimrc'
+autocmd User LocalVimRCPost echom 'after loading local vimrc'
+```
 
 ### The `LocalVimRCPre` autocommand
 
@@ -306,12 +409,46 @@ This autocommand is emitted right before sourcing each local vimrc file.
 
 This autocommands is emitted right after sourcing each local vimrc file.
 
+## Frequently Asked Questions
+
+### modeline settings are overwritten by local vimrc
+
+Depending on the |g:localvimrc_event| that is used to trigger loading local
+vimrc files it is possible that |modeline| already had been parsed. This might
+be cause problems. If for example there is `set ts=8 sts=4 sw=4 et` in the
+local vimrc and a Makefile contains `# vim: ts=4 sts=0 sw=4 noet` this modeline
+will not get applied with default settings of localvimrc. There are two
+possibilities to solve this.
+
+The first solution is to use |BufRead| as value for |g:localvimrc_event|. This
+event is emitted by Vim before modelines are processed.
+
+The second solution is to move all those settings to the local vimrc file and
+use different settings depending on the |filetype|:
+
+``` {.vim}
+if &ft == "make"
+  setl ts=4 sts=0 sw=4 noet
+else
+  setl ts=8 sts=4 sw=4 et
+endif
+```
+
 ## Contribute
 
 To contact the author (Markus Braun), please send an email to <markus.braun@krawel.de>
 
-If you think this plugin could be improved, fork on [Bitbucket] or [GitHub] and
-send a pull request or just tell me your ideas.
+If you think this plugin could be improved, fork on [GitHub] and send a pull
+request or just tell me your ideas.
+
+If you encounter a bug please enable debugging, export debugging messages to
+a file and create a bug report on [GitHub]. Debug messages can be enabled
+temporary and exported to a file called `localvimrc_debug.txt` on command line
+with the following command:
+
+``` {.sh}
+vim --cmd "let g:localvimrc_debug=99" -c "LocalVimRCDebugDump localvimrc_debug.txt" your_file
+```
 
 ## Credits
 
@@ -321,10 +458,44 @@ send a pull request or just tell me your ideas.
 - Justin M. Keyes for ideas to improve this plugin
 - Lars Winderling for whitelist/blacklist patch
 - Michon van Dooren for autocommands patch
+- Benoit de Chezell for fix with nested execution
+- Huy Le for patch to support Lua scripts in Neovim
 
 ## Changelog
 
-v2.6.0 : XXXX-XX-XXX
+vX.X.X : XXXX-XX-XX
+
+  - add command |LocalVimRCDebugDump| to write debug messages to a file.
+  - add support for Lua scripts when using Neovim.
+  
+v3.1.0 : 2020-05-20
+
+  - add option to disable probing of Python versions
+  - prevent recursive sourcing of local vimrc files
+  - better handling of syntax errors in sourced local vimrc files
+
+v3.0.1 : 2018-08-21
+
+  - fix a compatibility issue with unavailable |v:true| and |v:false| in Vim version 7.4
+
+v3.0.0 : 2018-08-14
+
+  - use SHA256 as for calculating checksums and use FNV-1 as fallback.
+  - add command |LocalVimRCCleanup| to remove all unusable persistence data.
+  - add command |LocalVimRCForget| to remove persistence data for given files.
+  - add command |LocalVimRCDebugShow| to show debug messages.
+  - add setting |g:localvimrc_debug_lines| to limit the number of stored debug messages.
+
+v2.7.0 : 2018-03-19
+
+  - add setting |g:localvimrc_enable| and commands |LocalVimRCEnable| and |LocalVimRCDisable| to globally disable processing of local vimrc files.
+  - add setting |g:localvimrc_event_pattern| to change the pattern for which the autocommand is executed.
+
+v2.6.1 : 2018-02-20
+
+  - fix a bug with missing uniq() in Vim version 7.4
+
+v2.6.0 : 2018-01-22
 
   - add command |LocalVimRCEdit| to edit sourced local vimrc files for the current buffer.
 
@@ -388,6 +559,5 @@ v1.2 : 2002-10-09
   - initial version
 
 
-[Bitbucket]: https://bitbucket.org/embear/localvimrc
 [GitHub]: https://github.com/embear/vim-localvimrc
 [VIM online]: http://www.vim.org/scripts/script.php?script_id=441
