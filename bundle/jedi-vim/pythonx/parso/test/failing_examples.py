@@ -19,14 +19,6 @@ def build_nested(code, depth, base='def f():\n'):
 FAILING_EXAMPLES = [
     '1 +',
     '?',
-    # Python/compile.c
-    dedent('''\
-        for a in [1]:
-            try:
-                pass
-            finally:
-                continue
-        '''), # 'continue' not supported inside 'finally' clause"
     'continue',
     'break',
     'return',
@@ -42,7 +34,7 @@ FAILING_EXAMPLES = [
     'lambda x=3, y: x',
     '__debug__ = 1',
     'with x() as __debug__: pass',
-    # Mostly 3.6 relevant
+
     '[]: int',
     '[a, b]: int',
     '(): int',
@@ -60,9 +52,38 @@ FAILING_EXAMPLES = [
     'f(x=2, y)',
     'f(**x, *y)',
     'f(**x, y=3, z)',
+    # augassign
     'a, b += 3',
     '(a, b) += 3',
     '[a, b] += 3',
+    '[a, 1] += 3',
+    'f() += 1',
+    'lambda x:None+=1',
+    '{} += 1',
+    '{a:b} += 1',
+    '{1} += 1',
+    '{*x} += 1',
+    '(x,) += 1',
+    '(x, y if a else q) += 1',
+    '[] += 1',
+    '[1,2] += 1',
+    '[] += 1',
+    'None += 1',
+    '... += 1',
+    'a > 1 += 1',
+    '"test" += 1',
+    '1 += 1',
+    '1.0 += 1',
+    '(yield) += 1',
+    '(yield from x) += 1',
+    '(x if x else y) += 1',
+    'a() += 1',
+    'a + b += 1',
+    '+a += 1',
+    'a and b += 1',
+    '*a += 1',
+    'a, b += 1',
+    'f"xxx" += 1',
     # All assignment tests
     'lambda a: 1 = 1',
     '[x for x in y] = 1',
@@ -110,6 +131,8 @@ FAILING_EXAMPLES = [
     r"u'\N{foo}'",
     r'b"\x"',
     r'b"\"',
+    'b"ä"',
+
     '*a, *b = 3, 3',
     'async def foo(): yield from []',
     'yield from []',
@@ -118,6 +141,54 @@ FAILING_EXAMPLES = [
     'def x(*): pass',
     '(%s *d) = x' % ('a,' * 256),
     '{**{} for a in [1]}',
+    '(True,) = x',
+    '([False], a) = x',
+    'def x(): from math import *',
+
+    # invalid del statements
+    'del x + y',
+    'del x(y)',
+    'async def foo(): del await x',
+    'def foo(): del (yield x)',
+    'del [x for x in range(10)]',
+    'del *x',
+    'del *x,',
+    'del (*x,)',
+    'del [*x]',
+    'del x, *y',
+    'del *x.y,',
+    'del *x[y],',
+    'del *x[y::], z',
+    'del x, (y, *z)',
+    'del (x, *[y, z])',
+    'del [x, *(y, [*z])]',
+    'del {}',
+    'del {x}',
+    'del {x, y}',
+    'del {x, *y}',
+
+    # invalid starred expressions
+    '*x',
+    '(*x)',
+    '((*x))',
+    '1 + (*x)',
+    '*x; 1',
+    '1; *x',
+    '1\n*x',
+    'x = *y',
+    'x: int = *y',
+    'def foo(): return *x',
+    'def foo(): yield *x',
+    'f"{*x}"',
+    'for *x in 1: pass',
+    '[1 for *x in 1]',
+
+    # str/bytes combinations
+    '"s" b""',
+    '"s" b"" ""',
+    'b"" "" b"" ""',
+    'f"s" b""',
+    'b"s" f""',
 
     # Parser/tokenize.c
     r'"""',
@@ -154,11 +225,22 @@ FAILING_EXAMPLES = [
     # Now nested parsing
     "f'{continue}'",
     "f'{1;1}'",
-    "f'{a=3}'",
+    "f'{a;}'",
     "f'{b\"\" \"\"}'",
-]
+    # f-string expression part cannot include a backslash
+    r'''f"{'\n'}"''',
 
-GLOBAL_NONLOCAL_ERROR = [
+    'async def foo():\n yield x\n return 1',
+    'async def foo():\n yield x\n return 1',
+
+    '[*[] for a in [1]]',
+    'async def bla():\n def x():  await bla()',
+    'del None',
+    'del True',
+    'del False',
+    'del ...',
+
+    # Errors of global / nonlocal
     dedent('''
         def glob():
             x = 3
@@ -255,59 +337,79 @@ GLOBAL_NONLOCAL_ERROR = [
                 def z():
                     nonlocal a
         '''),
+    # Name is assigned before nonlocal declaration
+    dedent('''
+        def x(a):
+            def y():
+                a = 10
+                nonlocal a
+       '''),
 ]
 
-if sys.version_info >= (3, 6):
-    FAILING_EXAMPLES += GLOBAL_NONLOCAL_ERROR
+if sys.version_info[:2] >= (3, 7):
+    # This is somehow ok in previous versions.
     FAILING_EXAMPLES += [
-        # Raises multiple errors in previous versions.
-        'async def foo():\n def nofoo():[x async for x in []]',
-    ]
-if sys.version_info >= (3, 5):
-    FAILING_EXAMPLES += [
-        # Raises different errors so just ignore them for now.
-        '[*[] for a in [1]]',
-        # Raises multiple errors in previous versions.
-        'async def bla():\n def x():  await bla()',
-    ]
-if sys.version_info >= (3, 4):
-    # Before that del None works like del list, it gives a NameError.
-    FAILING_EXAMPLES.append('del None')
-if sys.version_info >= (3,):
-    FAILING_EXAMPLES += [
-        # Unfortunately assigning to False and True do not raise an error in
-        # 2.x.
-        '(True,) = x',
-        '([False], a) = x',
-        # A symtable error that raises only a SyntaxWarning in Python 2.
-        'def x(): from math import *',
-        # unicode chars in bytes are allowed in python 2
-        'b"ä"',
-        # combining strings and unicode is allowed in Python 2.
-        '"s" b""',
-    ]
-if sys.version_info >= (2, 7):
-    # This is something that raises a different error in 2.6 than in the other
-    # versions. Just skip it for 2.6.
-    FAILING_EXAMPLES.append('[a, 1] += 3')
-
-if sys.version_info[:2] == (3, 5):
-    # yields are not allowed in 3.5 async functions. Therefore test them
-    # separately, here.
-    FAILING_EXAMPLES += [
-        'async def foo():\n yield x',
-        'async def foo():\n yield x',
-    ]
-else:
-    FAILING_EXAMPLES += [
-        'async def foo():\n yield x\n return 1',
-        'async def foo():\n yield x\n return 1',
+        'class X(base for base in bases): pass',
     ]
 
-
-if sys.version_info[:2] <= (3, 4):
-    # Python > 3.4 this is valid code.
+if sys.version_info[:2] < (3, 8):
     FAILING_EXAMPLES += [
-        'a = *[1], 2',
-        '(*[1], 2)',
+        # Python/compile.c
+        dedent('''\
+            for a in [1]:
+                try:
+                    pass
+                finally:
+                    continue
+            '''),  # 'continue' not supported inside 'finally' clause"
+    ]
+
+if sys.version_info[:2] >= (3, 8):
+    # assignment expressions from issue#89
+    FAILING_EXAMPLES += [
+        # Case 2
+        '(lambda: x := 1)',
+        '((lambda: x) := 1)',
+        # Case 3
+        '(a[i] := x)',
+        '((a[i]) := x)',
+        '(a(i) := x)',
+        # Case 4
+        '(a.b := c)',
+        '[(i.i:= 0) for ((i), j) in range(5)]',
+        # Case 5
+        '[i:= 0 for i, j in range(5)]',
+        '[(i:= 0) for ((i), j) in range(5)]',
+        '[(i:= 0) for ((i), j), in range(5)]',
+        '[(i:= 0) for ((i), j.i), in range(5)]',
+        '[[(i:= i) for j in range(5)] for i in range(5)]',
+        '[i for i, j in range(5) if True or (i:= 1)]',
+        '[False and (i:= 0) for i, j in range(5)]',
+        # Case 6
+        '[i+1 for i in (i:= range(5))]',
+        '[i+1 for i in (j:= range(5))]',
+        '[i+1 for i in (lambda: (j:= range(5)))()]',
+        # Case 7
+        'class Example:\n [(j := i) for i in range(5)]',
+        # Not in that issue
+        '(await a := x)',
+        '((await a) := x)',
+        # new discoveries
+        '((a, b) := (1, 2))',
+        '([a, b] := [1, 2])',
+        '({a, b} := {1, 2})',
+        '({a: b} := {1: 2})',
+        '(a + b := 1)',
+        '(True := 1)',
+        '(False := 1)',
+        '(None := 1)',
+        '(__debug__ := 1)',
+        # Unparenthesized walrus not allowed in dict literals, dict comprehensions and slices
+        '{a:="a": b:=1}',
+        '{y:=1: 2 for x in range(5)}',
+        'a[b:=0:1:2]',
+    ]
+    # f-string debugging syntax with invalid conversion character
+    FAILING_EXAMPLES += [
+        "f'{1=!b}'",
     ]

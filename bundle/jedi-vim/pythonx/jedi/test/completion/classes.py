@@ -31,11 +31,13 @@ second = 1
 second = ""
 class TestClass(object):
     var_class = TestClass(1)
+    self.pseudo_var = 3
 
     def __init__(self2, first_param, second_param, third=1.0):
         self2.var_inst = first_param
         self2.second = second_param
         self2.first = first_param
+        self2.first.var_on_argument = 5
         a = 3
 
     def var_func(self):
@@ -56,6 +58,8 @@ class TestClass(object):
     def ret(self, a1):
         # should not know any class functions!
         #? []
+        values
+        #?
         values
         #? ['return']
         ret
@@ -82,6 +86,10 @@ TestClass.var
 inst.var_local
 #? []
 TestClass.var_local.
+#?
+TestClass.pseudo_var
+#?
+TestClass().pseudo_var
 
 #? int()
 TestClass().ret(1)
@@ -276,7 +284,7 @@ V(1).c()
 V(1).d()
 # Only keywords should be possible to complete.
 #? ['is', 'in', 'not', 'and', 'or', 'if']
-V(1).d()
+V(1).d() 
 
 
 # -----------------
@@ -391,6 +399,12 @@ class Wrapper2():
 
 #? int()
 Wrapper(Base()).ret(3)
+#? ['ret']
+Wrapper(Base()).ret
+#? int()
+Wrapper(Wrapper(Base())).ret(3)
+#? ['ret']
+Wrapper(Wrapper(Base())).ret
 
 #? int()
 Wrapper2(Base()).ret(3)
@@ -401,6 +415,15 @@ class GetattrArray():
 
 #? int()
 GetattrArray().something[0]
+#? []
+GetattrArray().something
+
+class WeirdGetattr:
+    class __getattr__():
+        pass
+
+#? []
+WeirdGetattr().something
 
 
 # -----------------
@@ -417,6 +440,9 @@ class PrivateVar():
     def __private_func(self):
         return 1
 
+    #? int()
+    __private_func()
+
     def wrap_private(self):
         return self.__private_func()
 #? []
@@ -425,6 +451,8 @@ PrivateVar().__var
 PrivateVar().__var
 #? []
 PrivateVar().__private_func
+#? []
+PrivateVar.__private_func
 #? int()
 PrivateVar().wrap_private()
 
@@ -571,3 +599,56 @@ class Foo(object):
 
 #? int()
 Foo().b
+
+# -----------------
+# default arguments
+# -----------------
+
+default = ''
+class DefaultArg():
+    default = 3
+    def x(self, arg=default):
+        #? str()
+        default
+        return arg
+    def y(self):
+        return default
+
+#? int()
+DefaultArg().x()
+#? str()
+DefaultArg().y()
+#? int()
+DefaultArg.x()
+#? str()
+DefaultArg.y()
+
+
+# -----------------
+# Error Recovery
+# -----------------
+
+from import_tree.pkg.base import MyBase
+
+class C1(MyBase):
+    def f3(self):
+        #! 13 ['def f1']
+        self.f1() . # hey'''
+        #? 13 MyBase.f1
+        self.f1() . # hey'''
+
+# -----------------
+# With a very weird __init__
+# -----------------
+
+class WithWeirdInit:
+    class __init__:
+        def __init__(self, a):
+            self.a = a
+
+    def y(self):
+        return self.a
+
+
+#?
+WithWeirdInit(1).y()

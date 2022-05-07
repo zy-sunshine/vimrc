@@ -6,6 +6,7 @@ David Halter (@davidhalter) <davidhalter88@gmail.com>
 Code Contributors
 =================
 Alisdair Robertson (@robodair)
+Bryan Forbes (@bryanforbes) <bryan@reigndropsfall.net>
 
 
 Code Contributors (to Jedi and therefore possibly to this library)
@@ -49,6 +50,9 @@ Mathias Rav (@Mortal) <rav@cs.au.dk>
 Daniel Fiterman (@dfit99) <fitermandaniel2@gmail.com>
 Simon Ruggier (@sruggier)
 Élie Gouzien (@ElieGouzien)
+Tim Gates (@timgates42) <tim.gates@iress.com>
+Batuhan Taskaya (@isidentical) <isidentical@gmail.com>
+Jocelyn Boullier (@Kazy) <jocelyn@boullier.bzh>
 
 
 Note: (@user) means a github user name.

@@ -39,17 +39,14 @@ class Parser(BaseParser):
         'for_stmt': tree.ForStmt,
         'while_stmt': tree.WhileStmt,
         'try_stmt': tree.TryStmt,
-        'comp_for': tree.CompFor,
+        'sync_comp_for': tree.SyncCompFor,
         # Not sure if this is the best idea, but IMO it's the easiest way to
         # avoid extreme amounts of work around the subtle difference of 2/3
         # grammar in list comoprehensions.
-        'list_for': tree.CompFor,
-        # Same here. This just exists in Python 2.6.
-        'gen_for': tree.CompFor,
         'decorator': tree.Decorator,
         'lambdef': tree.Lambda,
-        'old_lambdef': tree.Lambda,
         'lambdef_nocond': tree.Lambda,
+        'namedexpr_test': tree.NamedExpr,
     }
     default_node = tree.PythonNode
 
@@ -65,8 +62,8 @@ class Parser(BaseParser):
     }
 
     def __init__(self, pgen_grammar, error_recovery=True, start_nonterminal='file_input'):
-        super(Parser, self).__init__(pgen_grammar, start_nonterminal,
-                                     error_recovery=error_recovery)
+        super().__init__(pgen_grammar, start_nonterminal,
+                         error_recovery=error_recovery)
 
         self.syntax_errors = []
         self._omit_dedent_list = []
@@ -79,7 +76,7 @@ class Parser(BaseParser):
 
             tokens = self._recovery_tokenize(tokens)
 
-        return super(Parser, self).parse(tokens)
+        return super().parse(tokens)
 
     def convert_node(self, nonterminal, children):
         """
@@ -90,7 +87,7 @@ class Parser(BaseParser):
         strictly bottom-up.
         """
         try:
-            return self.node_map[nonterminal](children)
+            node = self.node_map[nonterminal](children)
         except KeyError:
             if nonterminal == 'suite':
                 # We don't want the INDENT/DEDENT in our parser tree. Those
@@ -98,13 +95,8 @@ class Parser(BaseParser):
                 # ones and therefore have pseudo start/end positions and no
                 # prefixes. Just ignore them.
                 children = [children[0]] + children[2:-1]
-            elif nonterminal == 'list_if':
-                # Make transitioning from 2 to 3 easier.
-                nonterminal = 'comp_if'
-            elif nonterminal == 'listmaker':
-                # Same as list_if above.
-                nonterminal = 'testlist_comp'
-            return self.default_node(nonterminal, children)
+            node = self.default_node(nonterminal, children)
+        return node
 
     def convert_leaf(self, type, value, prefix, start_pos):
         # print('leaf', repr(value), token.tok_name[type])
@@ -124,10 +116,11 @@ class Parser(BaseParser):
             last_leaf = None
 
         if self._start_nonterminal == 'file_input' and \
-                (token.type == PythonTokenTypes.ENDMARKER or
-                 token.type == DEDENT and '\n' not in last_leaf.value):
+                (token.type == PythonTokenTypes.ENDMARKER
+                 or token.type == DEDENT and not last_leaf.value.endswith('\n')
+                 and not last_leaf.value.endswith('\r')):
             # In Python statements need to end with a newline. But since it's
-            # possible (and valid in Python ) that there's no newline at the
+            # possible (and valid in Python) that there's no newline at the
             # end of a file, we have to recover even if the user doesn't want
             # error recovery.
             if self.stack[-1].dfa.from_rule == 'simple_stmt':
@@ -144,7 +137,7 @@ class Parser(BaseParser):
                         return
 
         if not self._error_recovery:
-            return super(Parser, self).error_recovery(token)
+            return super().error_recovery(token)
 
         def current_suite(stack):
             # For now just discard everything that is not a suite or
@@ -189,7 +182,8 @@ class Parser(BaseParser):
         all_nodes = [node for stack_node in self.stack[start_index:] for node in stack_node.nodes]
 
         if all_nodes:
-            self.stack[start_index - 1].nodes.append(tree.PythonErrorNode(all_nodes))
+            node = tree.PythonErrorNode(all_nodes)
+            self.stack[start_index - 1].nodes.append(node)
 
         self.stack[start_index:] = []
         return bool(all_nodes)
@@ -197,13 +191,13 @@ class Parser(BaseParser):
     def _recovery_tokenize(self, tokens):
         for token in tokens:
             typ = token[0]
-            # print(tok_name[typ], repr(value), start_pos, repr(prefix))
             if typ == DEDENT:
                 # We need to count indents, because if we just omit any DEDENT,
                 # we might omit them in the wrong place.
                 o = self._omit_dedent_list
                 if o and o[-1] == self._indent_counter:
                     o.pop()
+                    self._indent_counter -= 1
                     continue
 
                 self._indent_counter -= 1

@@ -241,7 +241,7 @@ args_func(*1)[0]
 args_func(*iter([1]))[0]
 
 # different types
-e = args_func(*[1+"", {}])
+e = args_func(*[1 if UNDEFINED else "", {}])
 #? int() str()
 e[0]
 #? dict()
@@ -319,12 +319,26 @@ exe['c']
 a = 'a'
 exe2 = kwargs_func(**{a:3,
                       'b':4.0})
+
 #? int()
 exe2['a']
 #? float()
 exe2['b']
 #? int() float()
 exe2['c']
+
+exe3 = kwargs_func(**{k: v for k, v in [(a, 3), ('b', 4.0)]})
+
+# Should resolve to the same as 2 but jedi is not smart enough yet
+# Here to make sure it doesn't result in crash though
+#? 
+exe3['a']
+
+#? 
+exe3['b']
+
+#? 
+exe3['c']
 
 # -----------------
 # *args / ** kwargs

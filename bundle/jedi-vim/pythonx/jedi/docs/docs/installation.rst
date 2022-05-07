@@ -3,6 +3,15 @@
 Installation and Configuration
 ==============================
 
+.. warning:: Most people will want to install Jedi as a submodule/vendored and
+   not through pip/system wide. The reason for this is that it makes sense that
+   the plugin that uses Jedi has always access to it. Otherwise Jedi will not
+   work properly when virtualenvs are activated. So please read the
+   documentation of your editor/IDE plugin to install Jedi.
+
+   For plugin developers, Jedi works best if it is always available. Vendoring
+   is a pretty good option for that.
+
 You can either include |jedi| as a submodule in your text editor plugin (like
 jedi-vim_ does by default), or you can install it systemwide.
 
@@ -11,8 +20,16 @@ jedi-vim_ does by default), or you can install it systemwide.
     editor, refer to the corresponding documentation.
 
 
-The preferred way
------------------
+The normal way
+--------------
+
+Most people use Jedi with a :ref:`editor plugins<editor-plugins>`. Typically
+you install Jedi by installing an editor plugin. No necessary steps are needed.
+Just take a look at the instructions for the plugin.
+
+
+With pip
+--------
 
 On any system you can install |jedi| directly from the Python package index
 using pip::
@@ -33,14 +50,6 @@ Arch Linux
 You can install |jedi| directly from official Arch Linux packages:
 
 - `python-jedi <https://www.archlinux.org/packages/community/any/python-jedi/>`__
-  (Python 3)
-- `python2-jedi <https://www.archlinux.org/packages/community/any/python2-jedi/>`__
-  (Python 2)
-
-The specified Python version just refers to the *runtime environment* for
-|jedi|. Use the Python 2 version if you're running vim (or whatever editor you
-use) under Python 2. Otherwise, use the Python 3 version. But whatever version
-you choose, both are able to complete both Python 2 and 3 *code*.
 
 (There is also a packaged version of the vim plugin available: 
 `vim-jedi at Arch Linux <https://www.archlinux.org/packages/community/any/vim-jedi/>`__.)
@@ -57,18 +66,14 @@ Others
 We are in the discussion of adding |jedi| to the Fedora repositories.
 
 
-Manual installation from a downloaded package
+Manual installation from GitHub
 ---------------------------------------------
 
-If you prefer not to use an automated package installer, you can `download
-<https://github.com/davidhalter/jedi/archive/master.zip>`__ a current copy of
-|jedi| and install it manually.
+If you prefer not to use an automated package installer, you can clone the source from GitHub and install it manually. To install it, run these commands::
 
-To install it, navigate to the directory containing `setup.py` on your console
-and type::
-
+    git clone --recurse-submodules https://github.com/davidhalter/jedi
+    cd jedi
     sudo python setup.py install
-
 
 Inclusion as a submodule
 ------------------------

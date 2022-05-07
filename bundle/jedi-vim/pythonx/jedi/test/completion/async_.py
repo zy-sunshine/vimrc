@@ -5,8 +5,6 @@ Currently we're not supporting completion of them, but they should at least not
 raise errors or return extremely strange results.
 """
 
-# python >= 3.5
-
 async def x():
     return 1
 
@@ -27,11 +25,6 @@ async def y():
     #? ['__next__']
     x().__await__().__next
     return 2
-
-async def x2():
-    async with open('asdf') as f:
-        #? ['readlines']
-        f.readlines
 
 class A():
     @staticmethod
@@ -82,3 +75,47 @@ async def foo():
     normal_var2 = False
     #? ['normal_var1', 'normal_var2']
     normal_var
+
+
+class C:
+    @classmethod
+    async def async_for_classmethod(cls) -> "C":
+        return
+
+    async def async_for_method(cls) -> int:
+        return
+
+
+async def f():
+    c = await C.async_for_method()
+    #? int()
+    c
+    d = await C().async_for_method()
+    #? int()
+    d
+
+    e = await C.async_for_classmethod()
+    #? C()
+    e
+    f = await C().async_for_classmethod()
+    #? C()
+    f
+
+
+class AsyncCtxMgr:
+    def some_method():
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+
+async def asyncctxmgr():
+    async with AsyncCtxMgr() as acm:
+        #? AsyncCtxMgr()
+        acm
+        #? ['some_method']
+        acm.som

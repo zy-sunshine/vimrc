@@ -39,14 +39,28 @@ describe 'signatures'
     it 'simple after CursorHoldI with only parenthesis'
         noautocmd normal o
         doautocmd CursorHoldI
-        noautocmd normal istr()
+        noautocmd normal istaticmethod()
         doautocmd CursorHoldI
-        Expect getline(1) == '?!?jedi=0, ?!?   (*_*object*_*) ?!?jedi?!?'
+        Expect getline(1) == '?!?jedi=0, ?!?            (*_*f: Callable[..., Any]*_*) ?!?jedi?!?'
+    end
+
+    it 'highlights correct argument'
+        noautocmd normal o
+        doautocmd CursorHoldI
+        noautocmd normal iformat(42, "x")
+        " Move to x - highlights "x".
+        noautocmd normal 2h
+        doautocmd CursorHoldI
+        Expect getline(1) == '?!?jedi=0, ?!?      (value: object, *_*format_spec: str=...*_*) ?!?jedi?!?'
+        " Move left to 42 - hightlights first argument ("value").
+        noautocmd normal 4h
+        doautocmd CursorHoldI
+        Expect getline(1) == '?!?jedi=0, ?!?      (*_*value: object*_*, format_spec: str=...) ?!?jedi?!?'
     end
 
     it 'no signature'
         exe 'normal ostr '
-        Python jedi_vim.show_call_signatures()
+        python3 jedi_vim.show_call_signatures()
         Expect getline(1, '$') == ['', 'str ']
     end
 
@@ -54,7 +68,7 @@ describe 'signatures'
         let g:jedi#show_call_signatures = 0
 
         exe 'normal ostr( '
-        Python jedi_vim.show_call_signatures()
+        python3 jedi_vim.show_call_signatures()
         Expect getline(1, '$') == ['', 'str( ']
 
         let g:jedi#show_call_signatures = 1
@@ -64,11 +78,11 @@ describe 'signatures'
         let g:jedi#show_call_signatures = 2
         call jedi#configure_call_signatures()
 
-        exe 'normal ostr( '
+        exe 'normal ostaticmethod( '
         redir => msg
-        Python jedi_vim.show_call_signatures()
+        python3 jedi_vim.show_call_signatures()
         redir END
-        Expect msg == "\nstr(object)"
+        Expect msg == "\nstaticmethod(f: Callable[..., Any])"
 
         redir => msg
         doautocmd InsertLeave
@@ -78,7 +92,7 @@ describe 'signatures'
         normal Sdef foo(a, b): pass
         exe 'normal ofoo(a, b, c, '
         redir => msg
-        Python jedi_vim.show_call_signatures()
+        python3 jedi_vim.show_call_signatures()
         redir END
         Expect msg == "\nfoo(a, b)"
     end
@@ -89,7 +103,7 @@ describe 'signatures'
 
         function! Signature()
             redir => msg
-            Python jedi_vim.show_call_signatures()
+            python3 jedi_vim.show_call_signatures()
             redir END
             return msg
         endfunction
@@ -122,7 +136,7 @@ describe 'signatures'
 
         exe 'normal ostr '
         redir => msg
-        Python jedi_vim.show_call_signatures()
+        python3 jedi_vim.show_call_signatures()
         redir END
         Expect msg == "\n"
     end

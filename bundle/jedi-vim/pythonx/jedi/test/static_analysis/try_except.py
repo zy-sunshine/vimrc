@@ -17,7 +17,7 @@ except ImportError:
     pass
 try:
     #! 7 import-error
-    import not_existing_import
+    import not_existing_import2
 except AttributeError:
     pass
 
@@ -87,3 +87,21 @@ else:
     str.upper
     #! 4 attribute-error
     str.undefined
+
+# -----------------
+# arguments
+# -----------------
+
+def i_see(r):
+    return r
+
+def lala():
+    # This weird structure checks if the error is actually resolved in the
+    # right place.
+    a = TypeError
+    try:
+        i_see()
+    except a:
+        pass
+    #! 5 type-error-too-few-arguments
+    i_see()

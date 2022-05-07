@@ -310,11 +310,14 @@ follow_statement(1)
 # class decorators should just be ignored
 @should_ignore
 class A():
+    x = 3
     def ret(self):
         return 1
 
 #? int()
 A().ret()
+#? int()
+A().x
 
 
 # -----------------
@@ -327,3 +330,16 @@ import abc
 
 #? ['abstractmethod']
 @abc.abstractmethod
+
+# -----------------
+# Goto
+# -----------------
+x = 1
+
+#! 5 []
+@x.foo()
+def f(): pass
+
+#! 1 ['x = 1']
+@x.foo()
+def f(): pass

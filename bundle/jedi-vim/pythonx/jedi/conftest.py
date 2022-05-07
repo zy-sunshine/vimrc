@@ -1,20 +1,22 @@
 import tempfile
 import shutil
 import os
+import sys
 from functools import partial
 
 import pytest
 
 import jedi
-from jedi.api.environment import get_default_environment, get_system_environment
-from jedi._compatibility import py_version
+from jedi.api.environment import get_system_environment, InterpreterEnvironment
+from test.helpers import test_dir
 
 collect_ignore = [
     'setup.py',
-    '__main__.py',
-    'jedi/evaluate/compiled/subprocess/__main__.py',
+    'jedi/__main__.py',
+    'jedi/inference/compiled/subprocess/__main__.py',
     'build/',
     'test/examples',
+    'sith.py',
 ]
 
 
@@ -22,7 +24,7 @@ collect_ignore = [
 # to modify `jedi.settings.cache_directory` because `clean_jedi_cache`
 # has no effect during doctests.  Without these hooks, doctests uses
 # user's cache (e.g., ~/.cache/jedi/).  We should remove this
-# workaround once the problem is fixed in py.test.
+# workaround once the problem is fixed in pytest.
 #
 # See:
 # - https://github.com/davidhalter/jedi/pull/168
@@ -40,7 +42,10 @@ def pytest_addoption(parser):
                      help="Warnings are treated as errors.")
 
     parser.addoption("--env", action='store',
-                     help="Execute the tests in that environment (e.g. 35 for python3.5).")
+                     help="Execute the tests in that environment (e.g. 39 for python3.9).")
+    parser.addoption("--interpreter-env", "-I", action='store_true',
+                     help="Don't use subprocesses to guarantee having safe "
+                          "code execution. Useful for debugging.")
 
 
 def pytest_configure(config):
@@ -89,12 +94,15 @@ def clean_jedi_cache(request):
 def environment(request):
     version = request.config.option.env
     if version is None:
-        version = os.environ.get('JEDI_TEST_ENVIRONMENT', str(py_version))
+        v = str(sys.version_info[0]) + str(sys.version_info[1])
+        version = os.environ.get('JEDI_TEST_ENVIRONMENT', v)
 
-    if int(version) == py_version:
-        return get_default_environment()
+    if request.config.option.interpreter_env or version == 'interpreter':
+        return InterpreterEnvironment()
 
-    return get_system_environment(version[0] + '.' + version[1:])
+    if '.' not in version:
+        version = version[0] + '.' + version[1:]
+    return get_system_environment(version)
 
 
 @pytest.fixture(scope='session')
@@ -103,16 +111,62 @@ def Script(environment):
 
 
 @pytest.fixture(scope='session')
-def has_typing(environment):
-    if environment.version_info >= (3, 5, 0):
-        # This if is just needed to avoid that tests ever skip way more than
-        # they should for all Python versions.
-        return True
+def ScriptWithProject(Script):
+    project = jedi.Project(test_dir)
+    return partial(jedi.Script, project=project)
 
-    script = jedi.Script('import typing', environment=environment)
-    return bool(script.goto_definitions())
+
+@pytest.fixture(scope='session')
+def get_names(Script):
+    return lambda code, **kwargs: Script(code).get_names(**kwargs)
+
+
+@pytest.fixture(scope='session', params=['goto', 'infer'])
+def goto_or_infer(request, Script):
+    return lambda code, *args, **kwargs: getattr(Script(code), request.param)(*args, **kwargs)
+
+
+@pytest.fixture(scope='session', params=['goto', 'help'])
+def goto_or_help(request, Script):
+    return lambda code, *args, **kwargs: getattr(Script(code), request.param)(*args, **kwargs)
+
+
+@pytest.fixture(scope='session', params=['goto', 'help', 'infer'])
+def goto_or_help_or_infer(request, Script):
+    def do(code, *args, **kwargs):
+        return getattr(Script(code), request.param)(*args, **kwargs)
+
+    do.type = request.param
+    return do
+
+
+@pytest.fixture(scope='session', params=['goto', 'complete', 'help'])
+def goto_or_complete(request, Script):
+    return lambda code, *args, **kwargs: getattr(Script(code), request.param)(*args, **kwargs)
+
+
+@pytest.fixture(scope='session')
+def has_django(environment):
+    script = jedi.Script('import django', environment=environment)
+    return bool(script.infer())
 
 
 @pytest.fixture(scope='session')
 def jedi_path():
     return os.path.dirname(__file__)
+
+
+@pytest.fixture()
+def skip_pre_python38(environment):
+    if environment.version_info < (3, 8):
+        # This if is just needed to avoid that tests ever skip way more than
+        # they should for all Python versions.
+        pytest.skip()
+
+
+@pytest.fixture()
+def skip_pre_python37(environment):
+    if environment.version_info < (3, 7):
+        # This if is just needed to avoid that tests ever skip way more than
+        # they should for all Python versions.
+        pytest.skip()

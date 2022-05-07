@@ -1,9 +1,4 @@
-try:
-    from itertools import zip_longest
-except ImportError:
-    # Python 2
-    from itertools import izip_longest as zip_longest
-
+from itertools import zip_longest
 from codecs import BOM_UTF8
 
 import pytest
@@ -24,6 +19,7 @@ unicode_bom = BOM_UTF8.decode('utf-8')
     (' \f ', ['\f', ' ']),
     (' \f ', ['\f', ' ']),
     (' \r\n', ['\r\n', '']),
+    (' \r', ['\r', '']),
     ('\\\n', ['\\\n', '']),
     ('\\\r\n', ['\\\r\n', '']),
     ('\t\t\n\t', ['\n', '\t']),
@@ -39,12 +35,12 @@ def test_simple_prefix_splitting(string, tokens):
         assert pt.value == expected
 
         # Calculate the estimated end_pos
-        if expected.endswith('\n'):
+        if expected.endswith('\n') or expected.endswith('\r'):
             end_pos = start_pos[0] + 1, 0
         else:
             end_pos = start_pos[0], start_pos[1] + len(expected) + len(pt.spacing)
 
-        #assert start_pos == pt.start_pos
+        # assert start_pos == pt.start_pos
         assert end_pos == pt.end_pos
         start_pos = end_pos
 

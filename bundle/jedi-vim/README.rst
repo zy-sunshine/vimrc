@@ -58,9 +58,10 @@ generators, there is broad support.
 Apart from that, jedi-vim supports the following commands
 
 - Completion ``<C-Space>``
-- Goto assignments ``<leader>g`` (typical goto function)
-- Goto definitions ``<leader>d`` (follow identifier as far as possible,
+- Goto assignment ``<leader>g`` (typical goto function)
+- Goto definition ``<leader>d`` (follow identifier as far as possible,
   includes imports and statements)
+- Goto (typing) stub ``<leader>s``
 - Show Documentation/Pydoc ``K`` (shows a popup with assignments)
 - Renaming ``<leader>r``
 - Usages ``<leader>n`` (shows all the usages of a name)
@@ -72,9 +73,8 @@ Installation
 
 Requirements
 ------------
-You need a VIM version that was compiled with Python 2.6 or later
-(``+python`` or ``+python3``), which is typical for most distributions on
-Linux.  You can check this from within VIM using
+You need a VIM version that was compiled with Python 2.7 or later
+(``+python`` or ``+python3``).  You can check this from within VIM using
 ``:python3 import sys; print(sys.version)`` (use ``:python`` for Python 2).
 
 Manual installation
@@ -83,9 +83,8 @@ Manual installation
 You might want to use `pathogen <https://github.com/tpope/vim-pathogen>`_ or
 `Vundle <https://github.com/gmarik/vundle>`_ to install jedi-vim.
 
-The first thing you need after that is an up-to-date version of Jedi. You can
-either install it via ``pip install jedi`` or with
-``git submodule update --init`` in your jedi-vim repository.
+The first thing you need after that is an up-to-date version of Jedi. Install
+``git submodule update --init --recursive`` in your jedi-vim repository.
 
 Example installation command using Pathogen:
 
@@ -100,6 +99,9 @@ Add the following line in your `~/.vimrc`
 .. code-block:: vim
 
     Plugin 'davidhalter/jedi-vim'
+
+For installing Jedi, ``pip install jedi`` will also work, but you might run
+into issues when working in virtual environments. Please use git submodules.
 
 
 Installation with your distribution
@@ -180,8 +182,10 @@ and usually saves one keypress.
 
 Jedi displays function call signatures in insert mode in real-time, highlighting
 the current argument. The call signatures can be displayed as a pop-up in the
-buffer (set to 1, the default), which has the advantage of being easier to refer
-to, or in Vim's command line aligned with the function call (set to 2), which
+buffer (set to 1 by default (with the conceal feature), 2 otherwise),
+which has the advantage of being easier to refer to (but is a hack with
+many drawbacks since it changes the buffer's contents),
+or in Vim's command line aligned with the function call (set to 2), which
 can improve the integrity of Vim's undo history.
 
 .. code-block:: vim
@@ -197,12 +201,25 @@ get more information. If you set them to ``""``, they are not assigned.
 
     let g:jedi#goto_command = "<leader>d"
     let g:jedi#goto_assignments_command = "<leader>g"
+    let g:jedi#goto_stubs_command = "<leader>s"
     let g:jedi#goto_definitions_command = ""
     let g:jedi#documentation_command = "K"
     let g:jedi#usages_command = "<leader>n"
     let g:jedi#completions_command = "<C-Space>"
     let g:jedi#rename_command = "<leader>r"
 
+An example for setting up your project:
+
+.. code-block:: vim
+
+    let g:jedi#environment_path = "/usr/bin/python3.9"
+
+jedi-vim tries its best to guess your virtual env. If you want to work with a
+specific virtual environment however, you can point jedi-vim towards it:
+
+.. code-block:: vim
+
+    let g:jedi#environment_path = "venv"
 
 Finally, if you don't want completion, but all the other features, use:
 
@@ -212,6 +229,12 @@ Finally, if you don't want completion, but all the other features, use:
 
 FAQ
 ===
+
+I want to use Jedi with a Python 2 Environment, but it's not listed under "Known environments"
+----------------------------------------------------------------------------------------------
+
+Starting with version 0.18.0 Jedi dropped support for Python 2.
+
 
 I don't want the docstring window to popup during completion
 ------------------------------------------------------------

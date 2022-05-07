@@ -15,7 +15,10 @@ describe 'documentation docstrings'
         normal GK
         Expect bufname('%') == "__doc__"
         Expect &filetype == 'rst'
-        let content = join(getline(1,'$'), "\n")
+        let header = getline(1, 2)
+        Expect header[0] == "Docstring for class builtins.ImportError"
+        Expect header[1] == "========================================"
+        let content = join(getline(3, '$'), "\n")
         Expect stridx(content, "Import can't find module") > 0
         normal K
         Expect bufname('%') == ''

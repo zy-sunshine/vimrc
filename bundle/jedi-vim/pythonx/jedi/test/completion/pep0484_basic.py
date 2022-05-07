@@ -1,7 +1,5 @@
 """ Pep-0484 type hinting """
 
-# python >= 3.2
-
 
 class A():
     pass
@@ -24,7 +22,7 @@ def function_parameters(a: A, b, c: str, d: int, e: str, f: str, g: int=4):
     d
     #? str()
     e
-    #? int() str()
+    #? str()
     f
     # int()
     g
@@ -44,7 +42,7 @@ def return_none() -> None:
     """
     pass
 
-#?
+#? None
 return_none()
 
 
@@ -68,7 +66,7 @@ def return_annotation_and_docstring() -> str:
     """
     pass
 
-#? str() int()
+#? str()
 return_annotation_and_docstring()
 
 
@@ -138,7 +136,7 @@ function_with_non_pep_0484_annotation(1, 2, 3, "force string")
 def function_forward_reference_dynamic(
         x: return_str_type(),
         y: "return_str_type()") -> None:
-    #?
+    #? str()
     x
     #? str()
     y
@@ -165,3 +163,38 @@ def keyword_only(a: str, *, b: str):
     a.startswi
     #? ['startswith']
     b.startswi
+
+
+def argskwargs(*args: int, **kwargs: float):
+    """
+    This might be a bit confusing, but is part of the standard.
+    args is changed to Tuple[int] in this case and kwargs to Dict[str, float],
+    which makes sense if you think about it a bit.
+    """
+    #? tuple()
+    args
+    #? int()
+    args[0]
+    #? str()
+    next(iter(kwargs.keys()))
+    #? float()
+    kwargs['']
+
+
+class NotCalledClass:
+    def __init__(self, x):
+        self.x: int = x
+        self.y: int = ''
+        #? int()
+        self.x
+        #? int()
+        self.y
+        #? int()
+        self.y
+        self.z: int
+        self.z = ''
+        #? str() int()
+        self.z
+        self.w: float
+        #? float()
+        self.w

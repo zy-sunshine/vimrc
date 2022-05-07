@@ -2,13 +2,18 @@
 parso - A Python Parser
 ###################################################################
 
-.. image:: https://secure.travis-ci.org/davidhalter/parso.png?branch=master
-    :target: http://travis-ci.org/davidhalter/parso
-    :alt: Travis-CI build status
 
-.. image:: https://coveralls.io/repos/davidhalter/parso/badge.png?branch=master
-    :target: https://coveralls.io/r/davidhalter/parso
+.. image:: https://github.com/davidhalter/parso/workflows/Build/badge.svg?branch=master
+    :target: https://github.com/davidhalter/parso/actions
+    :alt: GitHub Actions build status
+
+.. image:: https://coveralls.io/repos/github/davidhalter/parso/badge.svg?branch=master
+    :target: https://coveralls.io/github/davidhalter/parso?branch=master
     :alt: Coverage Status
+
+.. image:: https://pepy.tech/badge/parso
+    :target: https://pepy.tech/project/parso
+    :alt: PyPI Downloads
 
 .. image:: https://raw.githubusercontent.com/davidhalter/parso/master/docs/_static/logo_characters.png
 
@@ -26,7 +31,7 @@ A simple example:
 .. code-block:: python
 
     >>> import parso
-    >>> module = parso.parse('hello + 1', version="3.6")
+    >>> module = parso.parse('hello + 1', version="3.9")
     >>> expr = module.children[0]
     >>> expr
     PythonNode(arith_expr, [<Name: hello@1,0>, <Operator: +>, <Number: 1>])
@@ -55,10 +60,10 @@ To list multiple issues:
 Resources
 =========
 
-- `Testing <http://parso.readthedocs.io/en/latest/docs/development.html#testing>`_
+- `Testing <https://parso.readthedocs.io/en/latest/docs/development.html#testing>`_
 - `PyPI <https://pypi.python.org/pypi/parso>`_
 - `Docs <https://parso.readthedocs.org/en/latest/>`_
-- Uses `semantic versioning <http://semver.org/>`_
+- Uses `semantic versioning <https://semver.org/>`_
 
 Installation
 ============

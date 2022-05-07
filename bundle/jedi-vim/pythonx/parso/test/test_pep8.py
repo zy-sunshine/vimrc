@@ -15,6 +15,8 @@ def test_eof_newline():
         assert issue.code == 292
 
     assert not issues('asdf = 1\n')
+    assert not issues('asdf = 1\r\n')
+    assert not issues('asdf = 1\r')
     assert_issue('asdf = 1')
     assert_issue('asdf = 1\n# foo')
     assert_issue('# foobar')
@@ -32,6 +34,7 @@ def test_eof_blankline():
     assert_issue('asdf = 1\n\n')
     assert_issue('# foobar\n\n')
     assert_issue('\n\n')
+
 
 def test_shebang():
     assert not issues('#!\n')
