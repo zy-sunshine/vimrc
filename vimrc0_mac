@@ -2,3 +2,6 @@ source ~/.vim/vimrc0
 
 " 设置拷贝剪贴板到系统剪贴板
 set clipboard^=unnamed,unnamedplus
+
+" 解决 autotag-vim 更新 tags 时的错误
+let g:autotagStartMethod='fork'
