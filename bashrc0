@@ -19,6 +19,7 @@ alias gd='git diff'
 alias gdc='git diff --cached'
 alias ga='git add'
 alias gc='git commit'
+alias gr='git remote -v'
 
 alias l='ls'
 alias ll='ls -l'
