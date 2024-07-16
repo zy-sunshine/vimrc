@@ -27,7 +27,7 @@ Following is the full stack trace:
             if hasattr(e, 'snippet_info'):
                 msg += "\nSnippet, caused error:\n"
                 msg += re.sub(
-                    '^(?=\S)', '  ', e.snippet_info, flags=re.MULTILINE
+                    r'^(?=\S)', '  ', e.snippet_info, flags=re.MULTILINE
                 )
             # snippet_code comes from _python_code.py, it's set manually for
             # providing error message with stacktrace of failed python code
