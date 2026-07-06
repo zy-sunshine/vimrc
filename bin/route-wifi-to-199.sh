@@ -10,7 +10,7 @@ sudo route delete default $GATEWAY 2>/dev/null
 sudo route delete -net $MIHOMO_NET $GATEWAY 2>/dev/null
 sudo route delete -net $DNS_IP/32 $GATEWAY 2>/dev/null
 
-if [$1 == "delete"];
+if [ "$1" == "delete" ]; then
     exit 0
 fi
 
